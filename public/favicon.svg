@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#D4AF37;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#D4AF37;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Primeiro anel -->
+  <ellipse cx="35" cy="55" rx="20" ry="18"
+    fill="none"
+    stroke="url(#goldGradient)"
+    stroke-width="6"
+    transform="rotate(-30 35 55)"/>
+
+  <!-- Segundo anel -->
+  <ellipse cx="65" cy="55" rx="20" ry="18"
+    fill="none"
+    stroke="url(#goldGradient)"
+    stroke-width="6"
+    transform="rotate(30 65 55)"/>
+
+  <!-- Brilho no primeiro anel -->
+  <ellipse cx="30" cy="48" rx="2" ry="3"
+    fill="white"
+    opacity="0.6"
+    transform="rotate(-30 30 48)"/>
+
+  <!-- Brilho no segundo anel -->
+  <ellipse cx="70" cy="48" rx="2" ry="3"
+    fill="white"
+    opacity="0.6"
+    transform="rotate(30 70 48)"/>
+</svg>
