@@ -5,9 +5,16 @@ interface CountdownProps {
   hours: number;
   minutes: number;
   seconds: number;
+  title?: string;
 }
 
-export default function Countdown({ targetDate }: { targetDate: Date }) {
+export default function Countdown({
+  targetDate,
+  title,
+}: {
+  targetDate: Date;
+  title?: string;
+}) {
   const [timeLeft, setTimeLeft] = useState<CountdownProps>({
     days: 0,
     hours: 0,
@@ -47,6 +54,7 @@ export default function Countdown({ targetDate }: { targetDate: Date }) {
         marginTop: "20px",
       }}
     >
+      <div>{title}</div>
       <div style={{ textAlign: "center" }}>
         <span style={{ fontSize: "32px", fontWeight: "bold" }}>
           {timeLeft.days}
