@@ -1,8 +1,9 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import supabase from "../services/supabase/client";
+import supabase from "../../services/supabase/client";
 import { guestSchema, type GuestFormData } from "../../schemas/guestSchema";
 import { toastError, totastSuccess } from "../../utils/toast";
+import { Element } from "react-scroll";
 
 export default function InputForm() {
   const {
@@ -40,7 +41,7 @@ export default function InputForm() {
   }
 
   return (
-    <div>
+    <Element name="rsvp" style={{ textAlign: "center", padding: "20px" }}>
       <h1>Confirme sua presença</h1>
       <form onSubmit={handleSubmit(handleForm)}>
         <div>
@@ -87,6 +88,6 @@ export default function InputForm() {
 
         <button type="submit">Confirmar</button>
       </form>
-    </div>
+    </Element>
   );
 }

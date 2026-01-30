@@ -1,3 +1,5 @@
+import { Element } from "react-scroll";
+
 interface LocationProps {
   embedUrl?: string;
   title?: string;
@@ -8,7 +10,8 @@ export default function Location({
   title = "📍 Villa Massari - Estrada Vereador Eugênio Guilherme Spitz, 2250 - Mury Nova Friburgo",
 }: LocationProps) {
   return (
-    <div style={{ textAlign: "center", padding: "20px" }}>
+    <Element name="location" style={{ textAlign: "center", padding: "20px" }}>
+      <p>Cerimônia</p>
       <h2>{title}</h2>
       <div
         style={{
@@ -49,6 +52,6 @@ export default function Location({
       >
         📍 Abrir no Google Maps
       </a>
-    </div>
+    </Element>
   );
 }
