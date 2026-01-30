@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import supabase from "../services/supabase/client";
 import { guestSchema, type GuestFormData } from "../../schemas/guestSchema";
+import { toastError, totastSuccess } from "../../utils/toast";
 
 export default function InputForm() {
   const {
@@ -26,10 +27,15 @@ export default function InputForm() {
 
     if (error) {
       console.error("Erro ao enviar dados:", error);
-      alert("Erro ao enviar dados. Tente novamente.");
+
+      if (error.code === "23505") {
+        toastError("Este e-mail já está cadastrado!");
+      } else {
+        toastError("Erro ao confirmar presença. Tente novamente.");
+      }
     } else {
       console.log("Dados enviados com sucesso:", responseData);
-      alert("Presença confirmada com sucesso!");
+      totastSuccess("Presença confirmada com sucesso!");
     }
   }
 
