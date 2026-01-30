@@ -1,5 +1,11 @@
+import InputForm from "./components/ui/inputForm";
+
 function App() {
-  return <h1>Olá teste</h1>
+  return (
+    <>
+      <InputForm />
+    </>
+  );
 }
 
-export default App
+export default App;
