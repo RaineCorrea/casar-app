@@ -57,7 +57,7 @@ export default function Header() {
             <Link
               key={item.to}
               to={item.to}
-              smooth={true}
+              smooth={false}
               duration={800}
               offset={-80}
               spy={true}
