@@ -131,7 +131,7 @@ export default function Welcome() {
 
         <Link
           to="countdown"
-          smooth={true}
+          smooth={false}
           duration={800}
           className="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer opacity-0 animate-fade-up group"
           style={{ animationDelay: "1.2s" }}
