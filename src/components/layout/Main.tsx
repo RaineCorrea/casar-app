@@ -9,10 +9,7 @@ export function Main() {
   return (
     <>
       <Welcome />
-      <Countdown
-        title="🎊 Contagem para o Casamento 🎊"
-        targetDate={countDownDate}
-      />
+      <Countdown targetDate={countDownDate} />
       <Location />
       <InputForm />
     </>

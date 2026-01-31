@@ -12,10 +12,9 @@ interface TimeLeft {
 
 interface CountdownProps {
   targetDate: Date;
-  title?: string;
 }
 
-export default function Countdown({ targetDate, title }: CountdownProps) {
+export default function Countdown({ targetDate }: CountdownProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft>({
     days: 0,
     hours: 0,
@@ -84,11 +83,9 @@ export default function Countdown({ targetDate, title }: CountdownProps) {
           <span className="w-20 h-px bg-gradient-to-l from-transparent to-forest/40" />
         </div>
 
-        {title && (
-          <h2 className="font-display text-forest text-3xl md:text-4xl mb-4 font-medium">
-            Contagem Regressiva
-          </h2>
-        )}
+        <h2 className="font-display text-forest text-3xl md:text-4xl mb-4 font-medium">
+          Contagem Regressiva
+        </h2>
 
         <p className="font-body text-forest-dark text-lg mb-12 italic">
           Para o dia mais especial das nossas vidas
