@@ -12,11 +12,13 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@supabase/supabase-js": "^2.93.3",
+    "@tailwindcss/vite": "^4.1.18",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.71.1",
     "react-scroll": "^1.9.3",
     "react-toastify": "^11.0.5",
+    "tailwindcss": "^4.1.18",
     "zod": "^4.3.6"
   },
   "devDependencies": {

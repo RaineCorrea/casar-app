@@ -1,55 +1,93 @@
 import { Link } from "react-scroll";
+import { useState, useEffect } from "react";
 
 export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("home");
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const navItems = [
+    { to: "home", label: "Início" },
+    { to: "location", label: "Localização" },
+    { to: "rsvp", label: "Confirmar Presença" },
+  ];
+
   return (
     <header
-      style={{
-        padding: "10px 20px",
-        backgroundColor: "#f8f8f8",
-        borderBottom: "1px solid #ddd",
-      }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled ? "py-3" : "bg-transparent py-6"
+      }`}
+      style={
+        scrolled
+          ? {
+              backgroundColor: "rgba(250, 248, 243, 0.5)",
+              backdropFilter: "blur(6px)",
+              WebkitBackdropFilter: "blur(6px)",
+              boxShadow: "0 8px 40px rgba(45, 74, 62, 0.12)",
+            }
+          : undefined
+      }
     >
-      <Link
-        to="home"
-        smooth={true}
-        duration={500}
+      <nav className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+        <Link
+          to="home"
+          smooth={true}
+          duration={800}
+          className="cursor-pointer group"
+        >
+          <span
+            className={`font-accent text-4xl transition-colors duration-300 ${
+              scrolled ? "text-forest" : "text-cream"
+            } group-hover:text-terracotta`}
+          >
+            M & N
+          </span>
+        </Link>
+
+        <div className="flex items-center gap-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              smooth={true}
+              duration={800}
+              offset={-80}
+              spy={true}
+              onSetActive={() => setActiveSection(item.to)}
+              className={`relative cursor-pointer font-body text-sm tracking-widest uppercase transition-all duration-300 ${
+                scrolled
+                  ? "text-forest-dark hover:text-terracotta"
+                  : "text-cream/90 hover:text-cream"
+              } ${activeSection === item.to ? "font-semibold" : ""}`}
+            >
+              {item.label}
+              <span
+                className={`absolute -bottom-1 left-0 h-px bg-terracotta transition-all duration-300 ${
+                  activeSection === item.to ? "w-full" : "w-0"
+                }`}
+              />
+            </Link>
+          ))}
+        </div>
+      </nav>
+
+      <div
+        className={`absolute bottom-0 left-0 right-0 h-px transition-opacity duration-500 ${
+          scrolled ? "opacity-100" : "opacity-0"
+        }`}
         style={{
-          textDecoration: "none",
-          color: "#333",
-          fontWeight: "bold",
-          cursor: "pointer",
+          background:
+            "linear-gradient(90deg, transparent, var(--color-sage-muted), transparent)",
         }}
-      >
-        Home
-      </Link>
-      <Link
-        to="location"
-        smooth={true}
-        duration={500}
-        style={{
-          textDecoration: "none",
-          color: "#333",
-          fontWeight: "bold",
-          cursor: "pointer",
-          marginLeft: "20px",
-        }}
-      >
-        Localização
-      </Link>
-      <Link
-        to="rsvp"
-        smooth={true}
-        duration={500}
-        style={{
-          textDecoration: "none",
-          color: "#333",
-          fontWeight: "bold",
-          cursor: "pointer",
-          marginLeft: "20px",
-        }}
-      >
-        Confirme sua presença
-      </Link>
+      />
     </header>
   );
 }
