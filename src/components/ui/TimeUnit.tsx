@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { CornerLeaf } from "../icons";
 
 interface TimeUnitProps {
   value: number;
@@ -15,9 +16,7 @@ const TimeUnit = memo(function TimeUnit({ value, label }: TimeUnitProps) {
         }}
       >
         <div className="absolute -top-2 -right-2 w-6 h-6 opacity-40 group-hover:opacity-60 transition-opacity duration-300">
-          <svg viewBox="0 0 24 24" className="text-sage">
-            <path d="M20 4 Q12 12 20 20 Q12 20 4 12 Q12 4 20 4" fill="currentColor" />
-          </svg>
+          <CornerLeaf />
         </div>
 
         <span

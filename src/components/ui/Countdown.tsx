@@ -1,6 +1,7 @@
 import { useState, useEffect, startTransition } from "react";
 import TimeUnit from "./TimeUnit";
 import { Element } from "react-scroll";
+import { WaveBottomLeft, WaveTopRight, SmallLeaf, HeartOrnament } from "../icons";
 
 interface TimeLeft {
   days: number;
@@ -63,34 +64,23 @@ export default function Countdown({ targetDate, title }: CountdownProps) {
       }}
     >
       <div className="absolute top-0 left-0 w-48 h-48 opacity-10">
-        <svg viewBox="0 0 100 100" className="w-full h-full text-forest">
-          <path d="M0 100 Q30 70 50 80 Q70 90 100 60 L100 100 Z" fill="currentColor" />
-        </svg>
+        <WaveBottomLeft />
       </div>
       <div className="absolute bottom-0 right-0 w-64 h-64 opacity-10">
-        <svg viewBox="0 0 100 100" className="w-full h-full text-sage">
-          <path d="M100 0 Q70 30 80 50 Q90 70 60 100 L100 100 Z" fill="currentColor" />
-        </svg>
+        <WaveTopRight />
       </div>
 
       <div className="absolute top-1/4 right-1/4 w-8 h-8 opacity-30 animate-float" style={{ animationDelay: '0.5s' }}>
-        <svg viewBox="0 0 32 32" className="text-forest">
-          <path d="M16 2 Q24 12 16 22 Q8 12 16 2" fill="currentColor" />
-        </svg>
+        <SmallLeaf />
       </div>
       <div className="absolute bottom-1/3 left-1/5 w-6 h-6 opacity-25 animate-float" style={{ animationDelay: '1.5s' }}>
-        <svg viewBox="0 0 32 32" className="text-forest-light">
-          <path d="M16 2 Q24 12 16 22 Q8 12 16 2" fill="currentColor" />
-        </svg>
+        <SmallLeaf />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <div className="mb-8 flex items-center justify-center gap-4">
           <span className="w-20 h-px bg-gradient-to-r from-transparent to-forest/40" />
-          <svg className="w-8 h-8 text-terracotta" viewBox="0 0 32 32">
-            <path d="M16 4 Q22 10 16 16 Q10 10 16 4" fill="currentColor" opacity="0.9" />
-            <path d="M16 16 Q22 22 16 28 Q10 22 16 16" fill="currentColor" opacity="0.7" />
-          </svg>
+          <HeartOrnament />
           <span className="w-20 h-px bg-gradient-to-l from-transparent to-forest/40" />
         </div>
 

@@ -1,4 +1,5 @@
 import { Element } from "react-scroll";
+import { CirclesDecoration, LeafDecoration, LocationPin, ArrowRightIcon, ClockIcon, HomeIcon } from "../icons";
 
 interface LocationProps {
   embedUrl?: string;
@@ -18,17 +19,10 @@ export default function Location({
       }}
     >
       <div className="absolute top-10 left-10 w-40 h-40 opacity-20">
-        <svg viewBox="0 0 100 100" className="text-forest-dark">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="0.5" />
-          <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" strokeWidth="0.5" />
-          <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" strokeWidth="0.5" />
-        </svg>
+        <CirclesDecoration />
       </div>
       <div className="absolute bottom-20 right-10 w-32 h-32 opacity-15 animate-sway">
-        <svg viewBox="0 0 100 100" className="text-cream">
-          <path d="M50 10 Q70 40 50 70 Q30 40 50 10" fill="currentColor" />
-          <path d="M50 70 L50 90" stroke="currentColor" strokeWidth="2" />
-        </svg>
+        <LeafDecoration />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
@@ -43,9 +37,7 @@ export default function Location({
 
           <div className="flex items-center justify-center gap-4 mb-6">
             <span className="w-16 h-px bg-forest-dark/50" />
-            <svg className="w-6 h-6 text-terracotta" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-            </svg>
+            <LocationPin />
             <span className="w-16 h-px bg-forest-dark/50" />
           </div>
 
@@ -98,14 +90,7 @@ export default function Location({
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
             </svg>
             <span>Abrir no Google Maps</span>
-            <svg
-              className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+            <ArrowRightIcon />
           </a>
         </div>
 
@@ -113,9 +98,7 @@ export default function Location({
           <div className="bg-cream/95 backdrop-blur-sm rounded-2xl p-8 shadow-soft">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-full bg-sage-light/50 flex items-center justify-center">
-                <svg className="w-6 h-6 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <ClockIcon />
               </div>
               <h3 className="font-display text-forest text-xl">Horário</h3>
             </div>
@@ -129,9 +112,7 @@ export default function Location({
           <div className="bg-cream/95 backdrop-blur-sm rounded-2xl p-8 shadow-soft">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-full bg-sage-light/50 flex items-center justify-center">
-                <svg className="w-6 h-6 text-forest" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
+                <HomeIcon />
               </div>
               <h3 className="font-display text-forest text-xl">Traje</h3>
             </div>

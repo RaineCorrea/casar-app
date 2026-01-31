@@ -1,5 +1,6 @@
 import { Element } from "react-scroll";
 import { Link } from "react-scroll";
+import { BotanicalLeaf1, BotanicalLeaf2, DecorativeFlower, SignatureLeaf, ScrollDownIcon } from "../icons";
 
 export default function Welcome() {
   return (
@@ -20,33 +21,15 @@ export default function Welcome() {
       />
 
       <div className="absolute top-20 left-10 w-32 h-32 opacity-20 animate-sway">
-        <svg viewBox="0 0 100 100" className="w-full h-full text-sage-light">
-          <path
-            d="M50 10 Q65 30 50 50 Q35 30 50 10 M50 50 Q65 70 50 90 Q35 70 50 50"
-            fill="currentColor"
-          />
-        </svg>
+        <BotanicalLeaf1 />
       </div>
       <div className="absolute bottom-40 right-10 w-24 h-24 opacity-15 animate-sway" style={{ animationDelay: '1s' }}>
-        <svg viewBox="0 0 100 100" className="w-full h-full text-sage-light">
-          <path
-            d="M50 10 Q70 35 50 60 Q30 35 50 10"
-            fill="currentColor"
-          />
-        </svg>
+        <BotanicalLeaf2 />
       </div>
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <div className="mb-8 opacity-0 animate-fade-up" style={{ animationDelay: '0.2s' }}>
-          <svg className="w-16 h-16 mx-auto text-cream/70" viewBox="0 0 64 64">
-            <path
-              d="M32 4 Q44 16 32 28 Q20 16 32 4 M32 28 Q44 40 32 52 Q20 40 32 28"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            />
-            <circle cx="32" cy="28" r="3" fill="currentColor" />
-          </svg>
+          <DecorativeFlower />
         </div>
 
         <h1
@@ -113,19 +96,7 @@ export default function Welcome() {
           </div>
 
           <div className="mt-8 flex justify-center">
-            <svg className="w-12 h-12 text-forest" viewBox="0 0 48 48">
-              <path
-                d="M24 4 Q36 18 24 32 Q12 18 24 4"
-                fill="currentColor"
-                opacity="0.5"
-              />
-              <path
-                d="M24 32 L24 44"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                fill="none"
-              />
-            </svg>
+            <SignatureLeaf />
           </div>
         </div>
 
@@ -138,14 +109,7 @@ export default function Welcome() {
         >
           <div className="flex flex-col items-center text-forest-dark hover:text-terracotta transition-colors duration-300">
             <span className="text-sm tracking-widest uppercase mb-2 font-semibold">Rolar</span>
-            <svg
-              className="w-6 h-6 animate-float"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
+            <ScrollDownIcon />
           </div>
         </Link>
       </div>
