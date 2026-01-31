@@ -1,4 +1,4 @@
-export function StarIcon() {
+export function IconeEstrela() {
   return (
     <svg className="w-8 h-8 text-forest/40" viewBox="0 0 32 32">
       <path

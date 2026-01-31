@@ -1,4 +1,4 @@
-export function CircleDecoration() {
+export function DecoracaoCirculo() {
   return (
     <svg viewBox="0 0 100 100" className="text-sage-light">
       <circle

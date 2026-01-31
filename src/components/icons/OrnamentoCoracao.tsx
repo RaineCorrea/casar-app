@@ -1,4 +1,4 @@
-export function HeartOrnament() {
+export function OrnamentoCoracao() {
   return (
     <svg className="w-8 h-8 text-terracotta" viewBox="0 0 32 32">
       <path d="M16 4 Q22 10 16 16 Q10 10 16 4" fill="currentColor" opacity="0.9" />

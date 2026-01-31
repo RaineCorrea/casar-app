@@ -1,4 +1,4 @@
-export function UserIcon() {
+export function IconeUsuario() {
   return (
     <svg className="w-5 h-5 text-sage" viewBox="0 0 20 20" fill="currentColor">
       <path

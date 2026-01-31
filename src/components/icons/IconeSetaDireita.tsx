@@ -1,4 +1,4 @@
-export function ArrowRightIcon() {
+export function IconeSetaDireita() {
   return (
     <svg
       className="w-4 h-4 opacity-60 group-hover:translate-x-1 transition-transform duration-300"

@@ -1,4 +1,4 @@
-export function LeafDecoration() {
+export function DecoracaoFolha() {
   return (
     <svg viewBox="0 0 100 100" className="text-cream">
       <path d="M50 5 Q75 35 50 65 Q25 35 50 5" fill="currentColor" />

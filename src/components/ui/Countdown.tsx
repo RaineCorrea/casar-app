@@ -1,7 +1,7 @@
 import { useState, useEffect, startTransition } from "react";
 import TimeUnit from "./TimeUnit";
 import { Element } from "react-scroll";
-import { WaveBottomLeft, WaveTopRight, SmallLeaf, HeartOrnament } from "../icons";
+import { OndaInferiorEsquerda, OndaSuperiorDireita, FolhaPequena, OrnamentoCoracao } from "../icons";
 
 interface TimeLeft {
   days: number;
@@ -64,23 +64,23 @@ export default function Countdown({ targetDate, title }: CountdownProps) {
       }}
     >
       <div className="absolute top-0 left-0 w-48 h-48 opacity-10">
-        <WaveBottomLeft />
+        <OndaInferiorEsquerda />
       </div>
       <div className="absolute bottom-0 right-0 w-64 h-64 opacity-10">
-        <WaveTopRight />
+        <OndaSuperiorDireita />
       </div>
 
       <div className="absolute top-1/4 right-1/4 w-8 h-8 opacity-30 animate-float" style={{ animationDelay: '0.5s' }}>
-        <SmallLeaf />
+        <FolhaPequena />
       </div>
       <div className="absolute bottom-1/3 left-1/5 w-6 h-6 opacity-25 animate-float" style={{ animationDelay: '1.5s' }}>
-        <SmallLeaf />
+        <FolhaPequena />
       </div>
 
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
         <div className="mb-8 flex items-center justify-center gap-4">
           <span className="w-20 h-px bg-gradient-to-r from-transparent to-forest/40" />
-          <HeartOrnament />
+          <OrnamentoCoracao />
           <span className="w-20 h-px bg-gradient-to-l from-transparent to-forest/40" />
         </div>
 

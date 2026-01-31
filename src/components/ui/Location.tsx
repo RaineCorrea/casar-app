@@ -1,5 +1,5 @@
 import { Element } from "react-scroll";
-import { CirclesDecoration, LeafDecoration, LocationPin, ArrowRightIcon, ClockIcon, HomeIcon } from "../icons";
+import { DecoracaoCirculos, DecoracaoFolha, PinLocalizacao, IconeSetaDireita, IconeRelogio, IconeHome } from "../icons";
 
 interface LocationProps {
   embedUrl?: string;
@@ -19,10 +19,10 @@ export default function Location({
       }}
     >
       <div className="absolute top-10 left-10 w-40 h-40 opacity-20">
-        <CirclesDecoration />
+        <DecoracaoCirculos />
       </div>
       <div className="absolute bottom-20 right-10 w-32 h-32 opacity-15 animate-sway">
-        <LeafDecoration />
+        <DecoracaoFolha />
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
@@ -37,7 +37,7 @@ export default function Location({
 
           <div className="flex items-center justify-center gap-4 mb-6">
             <span className="w-16 h-px bg-forest-dark/50" />
-            <LocationPin />
+            <PinLocalizacao />
             <span className="w-16 h-px bg-forest-dark/50" />
           </div>
 
@@ -90,7 +90,7 @@ export default function Location({
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
             </svg>
             <span>Abrir no Google Maps</span>
-            <ArrowRightIcon />
+            <IconeSetaDireita />
           </a>
         </div>
 
@@ -98,7 +98,7 @@ export default function Location({
           <div className="bg-cream/95 backdrop-blur-sm rounded-2xl p-8 shadow-soft">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-full bg-sage-light/50 flex items-center justify-center">
-                <ClockIcon />
+                <IconeRelogio />
               </div>
               <h3 className="font-display text-forest text-xl">Horário</h3>
             </div>
@@ -112,7 +112,7 @@ export default function Location({
           <div className="bg-cream/95 backdrop-blur-sm rounded-2xl p-8 shadow-soft">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-12 h-12 rounded-full bg-sage-light/50 flex items-center justify-center">
-                <HomeIcon />
+                <IconeHome />
               </div>
               <h3 className="font-display text-forest text-xl">Traje</h3>
             </div>

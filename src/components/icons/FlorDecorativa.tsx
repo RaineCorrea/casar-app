@@ -1,4 +1,4 @@
-export function DecorativeFlower() {
+export function FlorDecorativa() {
   return (
     <svg className="w-16 h-16 mx-auto text-cream/70" viewBox="0 0 64 64">
       <path

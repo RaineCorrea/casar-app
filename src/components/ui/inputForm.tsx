@@ -6,17 +6,17 @@ import { toastError, totastSuccess } from "../../utils/toast";
 import { Element } from "react-scroll";
 import { useState } from "react";
 import {
-  WaveTopDecoration,
-  LeafDecoration,
-  CircleDecoration,
-  HeartIcon,
-  UserIcon,
-  ErrorIcon,
-  PhoneIcon,
-  EmailIcon,
-  SpinnerIcon,
-  CheckIcon,
-  StarIcon,
+  DecoracaoOndaSuperior,
+  DecoracaoFolha,
+  DecoracaoCirculo,
+  IconeCoracao,
+  IconeUsuario,
+  IconeErro,
+  IconeTelefone,
+  IconeEmail,
+  IconeCarregando,
+  IconeCheck,
+  IconeEstrela,
 } from "../icons";
 
 export default function InputForm() {
@@ -71,22 +71,22 @@ export default function InputForm() {
       }}
     >
       <div className="absolute top-0 left-0 right-0 h-32 opacity-10">
-        <WaveTopDecoration />
+        <DecoracaoOndaSuperior />
       </div>
 
       <div className="absolute top-20 right-20 w-48 h-48 opacity-10 animate-sway">
-        <LeafDecoration />
+        <DecoracaoFolha />
       </div>
 
       <div className="absolute bottom-20 left-20 w-32 h-32 opacity-10 animate-float">
-        <CircleDecoration />
+        <DecoracaoCirculo />
       </div>
 
       <div className="relative z-10 max-w-xl mx-auto px-6">
         <div className="text-center mb-12">
           <div className="mb-6 flex items-center justify-center gap-4">
             <span className="w-16 h-px bg-cream/30" />
-            <HeartIcon />
+            <IconeCoracao />
             <span className="w-16 h-px bg-cream/30" />
           </div>
 
@@ -122,12 +122,12 @@ export default function InputForm() {
                   className="w-full px-5 py-4 bg-wheat/50 border-2 border-sage-light/30 rounded-xl font-body text-forest-dark placeholder-forest/50 transition-all duration-300 focus:border-terracotta focus:bg-cream focus:outline-none"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
-                  <UserIcon />
+                  <IconeUsuario />
                 </div>
               </div>
               {errors.name && (
                 <p className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1">
-                  <ErrorIcon />
+                  <IconeErro />
                   {errors.name.message}
                 </p>
               )}
@@ -149,12 +149,12 @@ export default function InputForm() {
                   className="w-full px-5 py-4 bg-wheat/50 border-2 border-sage-light/30 rounded-xl font-body text-forest-dark placeholder-forest/50 transition-all duration-300 focus:border-terracotta focus:bg-cream focus:outline-none"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
-                  <PhoneIcon />
+                  <IconeTelefone />
                 </div>
               </div>
               {errors.telefone && (
                 <p className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1">
-                  <ErrorIcon />
+                  <IconeErro />
                   {errors.telefone.message}
                 </p>
               )}
@@ -176,12 +176,12 @@ export default function InputForm() {
                   className="w-full px-5 py-4 bg-wheat/50 border-2 border-sage-light/30 rounded-xl font-body text-forest-dark placeholder-forest/50 transition-all duration-300 focus:border-terracotta focus:bg-cream focus:outline-none"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
-                  <EmailIcon />
+                  <IconeEmail />
                 </div>
               </div>
               {errors.email && (
                 <p className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1">
-                  <ErrorIcon />
+                  <IconeErro />
                   {errors.email.message}
                 </p>
               )}
@@ -196,13 +196,13 @@ export default function InputForm() {
               <span className="relative flex items-center justify-center gap-2">
                 {isSubmitting ? (
                   <>
-                    <SpinnerIcon />
+                    <IconeCarregando />
                     Confirmando...
                   </>
                 ) : (
                   <>
                     Confirmar Presença
-                    <CheckIcon />
+                    <IconeCheck />
                   </>
                 )}
               </span>
@@ -214,7 +214,7 @@ export default function InputForm() {
               Sua confirmação é muito importante para nós
             </p>
             <div className="mt-4 flex justify-center">
-              <StarIcon />
+              <IconeEstrela />
             </div>
           </div>
         </div>

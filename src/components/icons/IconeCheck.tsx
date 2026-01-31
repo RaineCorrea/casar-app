@@ -1,4 +1,4 @@
-export function CheckIcon() {
+export function IconeCheck() {
   return (
     <svg
       className="w-5 h-5 transform group-hover:translate-x-1 transition-transform duration-300"

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { CornerLeaf } from "../icons";
+import { FolhaCanto } from "../icons";
 
 interface TimeUnitProps {
   value: number;
@@ -16,7 +16,7 @@ const TimeUnit = memo(function TimeUnit({ value, label }: TimeUnitProps) {
         }}
       >
         <div className="absolute -top-2 -right-2 w-6 h-6 opacity-40 group-hover:opacity-60 transition-opacity duration-300">
-          <CornerLeaf />
+          <FolhaCanto />
         </div>
 
         <span

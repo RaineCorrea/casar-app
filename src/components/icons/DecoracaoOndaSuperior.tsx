@@ -1,4 +1,4 @@
-export function WaveTopDecoration() {
+export function DecoracaoOndaSuperior() {
   return (
     <svg
       viewBox="0 0 1200 120"

@@ -1,4 +1,4 @@
-export function SignatureLeaf() {
+export function FolhaAssinatura() {
   return (
     <svg className="w-12 h-12 text-forest" viewBox="0 0 48 48">
       <path

@@ -1,4 +1,4 @@
-export function SpinnerIcon() {
+export function IconeCarregando() {
   return (
     <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
       <circle

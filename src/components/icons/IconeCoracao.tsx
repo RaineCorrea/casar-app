@@ -1,4 +1,4 @@
-export function HeartIcon() {
+export function IconeCoracao() {
   return (
     <svg className="w-10 h-10 text-terracotta-light" viewBox="0 0 40 40">
       <path

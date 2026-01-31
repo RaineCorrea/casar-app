@@ -1,4 +1,4 @@
-export function ErrorIcon() {
+export function IconeErro() {
   return (
     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
       <path
