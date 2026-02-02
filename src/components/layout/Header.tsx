@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,7 +53,8 @@ export default function Header() {
           </span>
         </Link>
 
-        <div className="flex items-center gap-8">
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-8">
           {navItems.map((item) => (
             <Link
               key={item.to}
@@ -77,7 +79,71 @@ export default function Header() {
             </Link>
           ))}
         </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden flex flex-col items-center justify-center w-10 h-10 gap-1.5"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          <span
+            className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+              scrolled ? "text-forest-dark" : "text-cream"
+            } ${mobileMenuOpen ? "rotate-45 translate-y-2" : ""}`}
+          />
+          <span
+            className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+              scrolled ? "text-forest-dark" : "text-cream"
+            } ${mobileMenuOpen ? "opacity-0" : ""}`}
+          />
+          <span
+            className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+              scrolled ? "text-forest-dark" : "text-cream"
+            } ${mobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+          />
+        </button>
       </nav>
+
+      {/* Mobile Menu Dropdown */}
+      <div
+        className={`md:hidden absolute top-full left-0 right-0 transition-all duration-300 overflow-hidden ${
+          mobileMenuOpen
+            ? "max-h-96 opacity-100"
+            : "max-h-0 opacity-0"
+        }`}
+        style={
+          mobileMenuOpen
+            ? {
+                backgroundColor: "rgba(250, 248, 243, 0.98)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                boxShadow: "0 8px 40px rgba(45, 74, 62, 0.12)",
+              }
+            : undefined
+        }
+      >
+        <nav className="flex flex-col items-center py-6 gap-6">
+          {navItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              smooth={false}
+              duration={800}
+              offset={-80}
+              spy={true}
+              onSetActive={() => {
+                setActiveSection(item.to);
+                setMobileMenuOpen(false);
+              }}
+              className={`relative cursor-pointer font-body text-base tracking-widest uppercase transition-all duration-300 ${
+                activeSection === item.to ? "text-terracotta font-semibold" : "text-forest-dark hover:text-terracotta"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
 
       <div
         className={`absolute bottom-0 left-0 right-0 h-px transition-opacity duration-500 ${
