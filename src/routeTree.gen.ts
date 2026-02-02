@@ -10,42 +10,48 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Lista2026RouteImport } from './routes/lista2026'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as DefaultRouteImport } from './routes/_default'
+import { Route as DefaultIndexRouteImport } from './routes/_default/index'
 
 const Lista2026Route = Lista2026RouteImport.update({
   id: '/lista2026',
   path: '/lista2026',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const DefaultRoute = DefaultRouteImport.update({
+  id: '/_default',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DefaultIndexRoute = DefaultIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => DefaultRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof DefaultIndexRoute
   '/lista2026': typeof Lista2026Route
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/lista2026': typeof Lista2026Route
+  '/': typeof DefaultIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_default': typeof DefaultRouteWithChildren
   '/lista2026': typeof Lista2026Route
+  '/_default/': typeof DefaultIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths: '/' | '/lista2026'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/lista2026'
-  id: '__root__' | '/' | '/lista2026'
+  to: '/lista2026' | '/'
+  id: '__root__' | '/_default' | '/lista2026' | '/_default/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  DefaultRoute: typeof DefaultRouteWithChildren
   Lista2026Route: typeof Lista2026Route
 }
 
@@ -58,18 +64,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Lista2026RouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_default': {
+      id: '/_default'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof DefaultRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_default/': {
+      id: '/_default/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof DefaultIndexRouteImport
+      parentRoute: typeof DefaultRoute
     }
   }
 }
 
+interface DefaultRouteChildren {
+  DefaultIndexRoute: typeof DefaultIndexRoute
+}
+
+const DefaultRouteChildren: DefaultRouteChildren = {
+  DefaultIndexRoute: DefaultIndexRoute,
+}
+
+const DefaultRouteWithChildren =
+  DefaultRoute._addFileChildren(DefaultRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  DefaultRoute: DefaultRouteWithChildren,
   Lista2026Route: Lista2026Route,
 }
 export const routeTree = rootRouteImport
