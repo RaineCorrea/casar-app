@@ -1,32 +1,7 @@
-import { useEffect, useState } from "react"
-import supabase from "../../services/supabase/client"
-
-interface Product {
-  id: string
-  image: string
-  descricao?: string
-  preco: number
-  created_at: string
-  link?: string
-}
+import { useProducts } from "../../services/supabase/products"
 
 export default function Products() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    fetchProducts()
-  }, [])
-
-  async function fetchProducts() {
-    const { data, error } = await supabase.from("Products").select("*")
-    if (error) {
-      console.error("Error fetching products:", error)
-    } else {
-      setProducts(data || [])
-    }
-    setLoading(false)
-  }
+  const { data: products, isLoading, error } = useProducts()
 
   function formatPrice(price: number): string {
     return new Intl.NumberFormat("pt-BR", {
@@ -49,12 +24,16 @@ export default function Products() {
           </p>
         </div>
 
-        {loading ? (
+        {isLoading ? (
           <div className="text-center py-20" role="status" aria-live="polite">
             <div className="inline-block animate-spin rounded-full h-20 w-20 border-4 border-sage-light border-t-forest" aria-hidden="true"></div>
             <p className="mt-6 text-forest-dark font-body text-lg">Carregando presentes...</p>
           </div>
-        ) : products.length === 0 ? (
+        ) : error ? (
+          <div className="text-center py-20 bg-terracotta/10 border-2 border-terracotta rounded-3xl">
+            <p className="text-terracotta-dark font-body text-lg">{error.message}</p>
+          </div>
+        ) : !products || products.length === 0 ? (
           <div className="text-center py-20 bg-cream/80 rounded-3xl">
             <p className="text-forest-dark font-body text-lg">Nenhum produto disponível no momento.</p>
           </div>

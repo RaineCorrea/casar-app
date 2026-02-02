@@ -1,58 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
-import supabase from '../services/supabase/client'
-import { useEffect, useState } from 'react'
+import { createFileRoute } from "@tanstack/react-router";
+import { useGuestsWithRealtime } from "../services/supabase/guests";
 
-interface Guest {
-  id: string
-  name: string
-  email?: string
-  telefone?: string
-  created_at: string
-}
-
-export const Route = createFileRoute('/lista2026')({
+export const Route = createFileRoute("/lista2026")({
   component: Lista2026,
-})
+});
 
 function Lista2026() {
-  const [guests, setGuests] = useState<Guest[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetchGuests()
-
-    const channel = supabase
-      .channel('guestlist-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'GuestList',
-        },
-        (payload) => {
-          setGuests((prev) => [...prev, payload.new as Guest])
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [])
-
-  async function fetchGuests() {
-    try {
-      const { data, error } = await supabase.from("GuestList").select("*")
-      if (error) throw error
-      setGuests(data || [])
-    } catch {
-      setError("Erro ao carregar lista de convidados")
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data: guests, isLoading, error } = useGuestsWithRealtime();
 
   return (
     <div
@@ -70,26 +24,35 @@ function Lista2026() {
             Confira abaixo a lista de convidados confirmados
           </p>
 
-          {loading && (
+          {isLoading && (
             <div className="text-center py-12" role="status" aria-live="polite">
-              <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-sage-light border-t-forest" aria-hidden="true"></div>
-              <p className="mt-6 text-forest-dark font-body">Carregando lista de convidados...</p>
+              <div
+                className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-sage-light border-t-forest"
+                aria-hidden="true"
+              ></div>
+              <p className="mt-6 text-forest-dark font-body">
+                Carregando lista de convidados...
+              </p>
             </div>
           )}
 
           {error && (
             <div className="bg-terracotta/10 border-2 border-terracotta rounded-xl p-6 text-center">
-              <p className="text-terracotta-dark font-body font-medium">{error}</p>
+              <p className="text-terracotta-dark font-body font-medium">
+                {error.message}
+              </p>
             </div>
           )}
 
-          {!loading && !error && guests.length === 0 && (
+          {!isLoading && !error && (guests?.length ?? 0) === 0 && (
             <div className="text-center py-12 bg-wheat/50 rounded-2xl">
-              <p className="text-forest-dark font-body text-lg">Nenhum convidado confirmado ainda.</p>
+              <p className="text-forest-dark font-body text-lg">
+                Nenhum convidado confirmado ainda.
+              </p>
             </div>
           )}
 
-          {!loading && !error && guests.length > 0 && (
+          {!isLoading && !error && guests && guests.length > 0 && (
             <div className="space-y-4">
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-forest/20">
                 <span className="font-body text-base font-semibold text-forest-dark">
@@ -112,14 +75,18 @@ function Lista2026() {
                         <div className="space-y-2 font-body text-sm text-forest-dark/80">
                           {guest.email && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg" aria-hidden="true">✉</span>
+                              <span className="text-lg" aria-hidden="true">
+                                ✉
+                              </span>
                               <span className="sr-only">E-mail:</span>
                               <span>{guest.email}</span>
                             </div>
                           )}
                           {guest.telefone && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg" aria-hidden="true">📱</span>
+                              <span className="text-lg" aria-hidden="true">
+                                📱
+                              </span>
                               <span className="sr-only">Telefone:</span>
                               <span>{guest.telefone}</span>
                             </div>
@@ -135,5 +102,5 @@ function Lista2026() {
         </div>
       </div>
     </div>
-  )
+  );
 }

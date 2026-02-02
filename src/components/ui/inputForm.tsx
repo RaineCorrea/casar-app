@@ -1,10 +1,8 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import supabase from "../../services/supabase/client";
 import { guestSchema, type GuestFormData } from "../../schemas/guestSchema";
 import { toastError, totastSuccess } from "../../utils/toast";
 import { Element } from "react-scroll";
-import { useState } from "react";
 import {
   DecoracaoOndaSuperior,
   DecoracaoFolha,
@@ -18,10 +16,9 @@ import {
   IconeCheck,
   IconeEstrela,
 } from "../icons";
+import { useAddGuest } from "../../services/supabase/guests";
 
 export default function InputForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const {
     register,
     handleSubmit,
@@ -31,34 +28,25 @@ export default function InputForm() {
     resolver: zodResolver(guestSchema),
   });
 
+  const addGuest = useAddGuest();
+
   async function handleForm(data: GuestFormData) {
-    setIsSubmitting(true);
-
-    const guestData = {
-      name: data.name,
-      telefone: data.telefone,
-      email: data.email,
-    };
-
-    const { data: responseData, error } = await supabase
-      .from("GuestList")
-      .insert([guestData])
-      .select();
-
-    setIsSubmitting(false);
-
-    if (error) {
-      console.error("Erro ao enviar dados:", error);
-
-      if (error.code === "23505") {
-        toastError("Este e-mail já está cadastrado!");
-      } else {
-        toastError("Erro ao confirmar presença. Tente novamente.");
-      }
-    } else {
-      console.log("Dados enviados com sucesso:", responseData);
-      totastSuccess("Presença confirmada com sucesso!");
+    try {
+      await addGuest.mutateAsync({
+        name: data.name,
+        telefone: data.telefone,
+        email: data.email,
+      });
+      totastSuccess("Confirmação enviada com sucesso!");
       reset();
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes("23505")) {
+          toastError("Este nome já foi confirmado.");
+        } else {
+          toastError("Erro ao enviar confirmação. Tente novamente.");
+        }
+      }
     }
   }
 
@@ -128,7 +116,11 @@ export default function InputForm() {
                 </div>
               </div>
               {errors.name && (
-                <p id="name-error" className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1" role="alert">
+                <p
+                  id="name-error"
+                  className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1"
+                  role="alert"
+                >
                   <IconeErro />
                   {errors.name.message}
                 </p>
@@ -148,7 +140,9 @@ export default function InputForm() {
                   type="tel"
                   {...register("telefone")}
                   placeholder="(00) 00000-0000"
-                  aria-describedby={errors.telefone ? "telefone-error" : undefined}
+                  aria-describedby={
+                    errors.telefone ? "telefone-error" : undefined
+                  }
                   aria-invalid={errors.telefone ? "true" : "false"}
                   className="w-full px-5 py-4 bg-wheat/50 border-2 border-sage-light/30 rounded-xl font-body text-forest-dark placeholder-forest/50 transition-all duration-300 focus:border-terracotta focus:bg-cream focus:outline-none"
                 />
@@ -157,7 +151,11 @@ export default function InputForm() {
                 </div>
               </div>
               {errors.telefone && (
-                <p id="telefone-error" className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1" role="alert">
+                <p
+                  id="telefone-error"
+                  className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1"
+                  role="alert"
+                >
                   <IconeErro />
                   {errors.telefone.message}
                 </p>
@@ -186,7 +184,11 @@ export default function InputForm() {
                 </div>
               </div>
               {errors.email && (
-                <p id="email-error" className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1" role="alert">
+                <p
+                  id="email-error"
+                  className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1"
+                  role="alert"
+                >
                   <IconeErro />
                   {errors.email.message}
                 </p>
@@ -195,12 +197,17 @@ export default function InputForm() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={addGuest.isPending}
               className="group cursor-pointer relative w-full mt-8 py-4 px-8 bg-forest text-cream font-display text-lg tracking-wide rounded-xl overflow-hidden transition-all duration-300 hover:bg-forest-dark hover:shadow-lifted disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <span className="absolute inset-0 bg-gradient-to-r from-terracotta to-terracotta-dark transform translate-x-full group-hover:translate-x-0 transition-transform duration-500" />
+              <span
+                className="absolute inset-0 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500"
+                style={{
+                  background: "linear-gradient(to right, var(--color-terracotta), var(--color-terracotta-dark))",
+                }}
+              />
               <span className="relative flex items-center justify-center gap-2">
-                {isSubmitting ? (
+                {addGuest.isPending ? (
                   <>
                     <IconeCarregando />
                     Confirmando...
