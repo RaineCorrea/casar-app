@@ -1,6 +1,7 @@
 import Countdown from "../ui/Countdown";
 import InputForm from "../ui/inputForm";
 import Location from "../ui/Location";
+import Products from "../ui/Products";
 import Welcome from "../ui/welcome";
 
 export function Main() {
@@ -11,6 +12,7 @@ export function Main() {
       <Welcome />
       <Countdown targetDate={countDownDate} />
       <Location />
+      <Products/>
       <InputForm />
     </>
   );
