@@ -36,12 +36,12 @@ export default function Products() {
   }
 
   return (
-    <div className="py-16 px-6 bg-wheat/30">
+    <section aria-labelledby="products-heading" className="py-16 px-6 bg-wheat/30">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="font-display text-forest text-4xl md:text-5xl mb-4 font-medium">
+          <h2 id="products-heading" className="font-display text-forest text-4xl md:text-5xl mb-4 font-medium">
             Lista de Presentes
-          </h1>
+          </h2>
           <p className="font-body text-forest-dark/80 text-lg max-w-2xl mx-auto leading-relaxed">
             Selecionamos com carinho alguns itens especiais. Sintam-se à vontade para escolher o que
             desejarem ou até mesmo pensar em algo diferente. Para nós, o que mais importa é o
@@ -50,8 +50,8 @@ export default function Products() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20">
-            <div className="inline-block animate-spin rounded-full h-20 w-20 border-4 border-sage-light border-t-forest"></div>
+          <div className="text-center py-20" role="status" aria-live="polite">
+            <div className="inline-block animate-spin rounded-full h-20 w-20 border-4 border-sage-light border-t-forest" aria-hidden="true"></div>
             <p className="mt-6 text-forest-dark font-body text-lg">Carregando presentes...</p>
           </div>
         ) : products.length === 0 ? (
@@ -61,9 +61,10 @@ export default function Products() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => (
-              <div
+              <article
                 key={product.id}
                 className="bg-cream/95 backdrop-blur-sm rounded-3xl shadow-soft overflow-hidden hover:shadow-lifted transition-all duration-300 group"
+                aria-labelledby={`product-${product.id}-name`}
               >
                 <div className="aspect-square overflow-hidden bg-wheat/50">
                   <img
@@ -74,7 +75,7 @@ export default function Products() {
                 </div>
 
                 <div className="p-6">
-                  <h3 className="font-display text-forest-dark text-xl mb-3 font-medium min-h-15">
+                  <h3 id={`product-${product.id}-name`} className="font-display text-forest-dark text-xl mb-3 font-medium min-h-15">
                     {product.descricao}
                   </h3>
 
@@ -89,6 +90,7 @@ export default function Products() {
                       href={product.link}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Ver produto ${product.descricao} (abre em nova aba)`}
                       className="group/link block w-full py-3 px-6 bg-forest text-cream font-body text-center rounded-xl overflow-hidden transition-all duration-300 hover:bg-forest-dark hover:shadow-soft"
                     >
                       <span className="flex items-center justify-center gap-2">
@@ -98,6 +100,8 @@ export default function Products() {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
+                          aria-hidden="true"
+                          focusable="false"
                         >
                           <path
                             strokeLinecap="round"
@@ -114,7 +118,7 @@ export default function Products() {
                     </div>
                   )}
                 </div>
-              </div>
+              </article>
             ))}
           </div>
         )}
@@ -126,6 +130,6 @@ export default function Products() {
           <p className="font-accent text-forest text-3xl">Matheus & Nicolly</p>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

@@ -13,6 +13,7 @@ export default function Location({
   return (
     <Element
       name="location"
+      aria-label="Informações de localização do evento"
       className="relative py-24 md:py-32 overflow-hidden"
       style={{
         background: `linear-gradient(180deg, var(--color-cream) 0%, var(--color-sage-light) 30%, var(--color-forest) 100%)`,
@@ -63,7 +64,7 @@ export default function Location({
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-              title={title}
+              title={`Mapa mostrando a localização de ${title} no Google Maps`}
             />
 
             <div
@@ -80,16 +81,20 @@ export default function Location({
             href="https://www.google.com/maps/place/Villa+Massari/@-22.3326366,-42.4949624,17z/data=!3m1!4b1!4m6!3m5!1s0x978bf392346977:0x18580ad35fc3a315!8m2!3d-22.3326366!4d-42.4949624!16s%2Fg%2F11l2f99k91"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Abrir localização no Google Maps (abre em nova aba)"
             className="group inline-flex items-center gap-3 bg-cream text-forest px-8 py-4 rounded-full font-body text-lg shadow-soft hover:shadow-lifted hover:-translate-y-0.5 transition-all duration-300"
           >
             <svg
               className="w-5 h-5 text-terracotta group-hover:scale-110 transition-transform duration-300"
               viewBox="0 0 24 24"
               fill="currentColor"
+              aria-hidden="true"
+              focusable="false"
             >
               <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
             </svg>
             <span>Abrir no Google Maps</span>
+            <span className="sr-only">(abre em nova aba)</span>
             <IconeSetaDireita />
           </a>
         </div>

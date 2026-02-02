@@ -119,6 +119,8 @@ export default function InputForm() {
                   type="text"
                   {...register("name")}
                   placeholder="Digite seu nome completo"
+                  aria-describedby={errors.name ? "name-error" : undefined}
+                  aria-invalid={errors.name ? "true" : "false"}
                   className="w-full px-5 py-4 bg-wheat/50 border-2 border-sage-light/30 rounded-xl font-body text-forest-dark placeholder-forest/50 transition-all duration-300 focus:border-terracotta focus:bg-cream focus:outline-none"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
@@ -126,7 +128,7 @@ export default function InputForm() {
                 </div>
               </div>
               {errors.name && (
-                <p className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1">
+                <p id="name-error" className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1" role="alert">
                   <IconeErro />
                   {errors.name.message}
                 </p>
@@ -146,6 +148,8 @@ export default function InputForm() {
                   type="tel"
                   {...register("telefone")}
                   placeholder="(00) 00000-0000"
+                  aria-describedby={errors.telefone ? "telefone-error" : undefined}
+                  aria-invalid={errors.telefone ? "true" : "false"}
                   className="w-full px-5 py-4 bg-wheat/50 border-2 border-sage-light/30 rounded-xl font-body text-forest-dark placeholder-forest/50 transition-all duration-300 focus:border-terracotta focus:bg-cream focus:outline-none"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
@@ -153,7 +157,7 @@ export default function InputForm() {
                 </div>
               </div>
               {errors.telefone && (
-                <p className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1">
+                <p id="telefone-error" className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1" role="alert">
                   <IconeErro />
                   {errors.telefone.message}
                 </p>
@@ -173,6 +177,8 @@ export default function InputForm() {
                   type="email"
                   {...register("email")}
                   placeholder="seu@email.com"
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  aria-invalid={errors.email ? "true" : "false"}
                   className="w-full px-5 py-4 bg-wheat/50 border-2 border-sage-light/30 rounded-xl font-body text-forest-dark placeholder-forest/50 transition-all duration-300 focus:border-terracotta focus:bg-cream focus:outline-none"
                 />
                 <div className="absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300">
@@ -180,7 +186,7 @@ export default function InputForm() {
                 </div>
               </div>
               {errors.email && (
-                <p className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1">
+                <p id="email-error" className="mt-2 text-terracotta-dark text-sm font-body flex items-center gap-1" role="alert">
                   <IconeErro />
                   {errors.email.message}
                 </p>

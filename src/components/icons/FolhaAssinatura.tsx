@@ -1,6 +1,6 @@
 export function FolhaAssinatura() {
   return (
-    <svg className="w-12 h-12 text-forest" viewBox="0 0 48 48">
+    <svg className="w-12 h-12 text-forest" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
       <path
         d="M24 4 Q36 18 24 32 Q12 18 24 4"
         fill="currentColor"

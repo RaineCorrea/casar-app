@@ -1,6 +1,6 @@
 export function IconeCarregando() {
   return (
-    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+    <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <circle
         className="opacity-25"
         cx="12"

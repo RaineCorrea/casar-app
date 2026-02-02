@@ -71,8 +71,8 @@ function Lista2026() {
           </p>
 
           {loading && (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-sage-light border-t-forest"></div>
+            <div className="text-center py-12" role="status" aria-live="polite">
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-sage-light border-t-forest" aria-hidden="true"></div>
               <p className="mt-6 text-forest-dark font-body">Carregando lista de convidados...</p>
             </div>
           )}
@@ -112,13 +112,15 @@ function Lista2026() {
                         <div className="space-y-2 font-body text-sm text-forest-dark/80">
                           {guest.email && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg">✉</span>
+                              <span className="text-lg" aria-hidden="true">✉</span>
+                              <span className="sr-only">E-mail:</span>
                               <span>{guest.email}</span>
                             </div>
                           )}
                           {guest.telefone && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg">📱</span>
+                              <span className="text-lg" aria-hidden="true">📱</span>
+                              <span className="sr-only">Telefone:</span>
                               <span>{guest.telefone}</span>
                             </div>
                           )}

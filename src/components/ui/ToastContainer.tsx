@@ -16,6 +16,9 @@ export default function CustomToastContainer() {
       pauseOnHover={true}
       theme="light"
       transition={Flip}
+      aria-live="assertive"
+      aria-atomic="true"
+      role="alert"
     />
   );
 }

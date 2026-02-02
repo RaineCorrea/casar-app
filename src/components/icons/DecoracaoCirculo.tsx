@@ -1,6 +1,6 @@
 export function DecoracaoCirculo() {
   return (
-    <svg viewBox="0 0 100 100" className="text-sage-light">
+    <svg viewBox="0 0 100 100" className="text-sage-light" aria-hidden="true" focusable="false">
       <circle
         cx="50"
         cy="50"
