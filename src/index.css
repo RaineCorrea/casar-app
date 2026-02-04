@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
-@theme {
+:root {
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Cormorant Garamond", "Times New Roman", serif;
   --font-accent: "Tangerine", cursive;
+}
 
+@theme {
+  /* Cores e somenas */
   --color-forest: #1e3a2f;
   --color-forest-dark: #0f2318;
   --color-forest-light: #2d5a47;
@@ -163,14 +166,24 @@ body::before {
 
 .Toastify__toast {
   font-family: var(--font-body) !important;
-  border-radius: 8px !important;
+  border-radius: 12px !important;
   box-shadow: var(--shadow-lifted) !important;
+  padding: 16px !important;
 }
 
 .Toastify__toast--success {
   background: var(--color-forest) !important;
+  color: var(--color-cream) !important;
 }
 
 .Toastify__toast--error {
-  background: var(--color-terracotta-dark) !important;
+  background: #dc2626 !important;
+  color: #ffffff !important;
+  border: 2px solid #b91c1c !important;
+}
+
+.Toastify__toast-body {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
 }

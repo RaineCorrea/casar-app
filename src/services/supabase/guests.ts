@@ -1,42 +1,24 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchGuests, addGuest as addGuestServer, type Guest } from "./server";
 import supabase from "./client";
 import { useEffect } from "react";
 
-interface Guest {
-  id: string;
-  name: string;
-  email?: string;
-  telefone?: string;
-  created_at: string;
-}
+export type { Guest };
+
+export const guestsQueryOptions = queryOptions({
+  queryKey: ["guests"],
+  queryFn: () => fetchGuests(),
+});
 
 export function useGuests() {
-  return useQuery({
-    queryKey: ["guests"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("GuestList").select("*");
-      if (error) {
-        throw new Error(error.message);
-      }
-      return data as Guest[];
-    },
-  });
+  return useQuery(guestsQueryOptions);
 }
 
 export function useAddGuest() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (guest: Omit<Guest, "id" | "created_at">) => {
-      const { data, error } = await supabase
-        .from("GuestList")
-        .insert([guest])
-        .select()
-        .single();
-
-      if (error) {
-        throw new Error(error.message);
-      }
-      return data as Guest;
+      return addGuestServer({ data: guest });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["guests"] });
@@ -66,7 +48,7 @@ export function useGuestsWithRealtime() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [queryClient]);
 
   return useGuests();
 }

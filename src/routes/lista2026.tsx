@@ -1,12 +1,33 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useGuestsWithRealtime } from "../services/supabase/guests";
+import {
+  guestsQueryOptions,
+  useGuestsWithRealtime,
+} from "../services/supabase/guests";
+import { validateAdminToken } from "../services/auth/admin";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/lista2026")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(guestsQueryOptions);
+  },
   component: Lista2026,
 });
 
 function Lista2026() {
   const { data: guests, isLoading, error } = useGuestsWithRealtime();
+
+  useEffect(() => {
+    const token = localStorage.getItem("admin_token");
+
+    if (!token || !validateAdminToken(token)) {
+      window.location.href = "/login";
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("admin_token");
+    window.location.href = "/login";
+  };
 
   return (
     <div
@@ -17,12 +38,24 @@ function Lista2026() {
     >
       <div className="max-w-4xl mx-auto">
         <div className="bg-cream/95 backdrop-blur-sm rounded-3xl shadow-lifted p-8">
-          <h1 className="font-display text-forest text-4xl md:text-5xl mb-3 text-center font-medium">
-            Lista de Convidados
-          </h1>
-          <p className="text-forest-dark/80 text-center mb-8 max-w-md mx-auto leading-relaxed">
-            Confira abaixo a lista de convidados confirmados
-          </p>
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h1 className="font-display text-forest text-4xl md:text-5xl mb-3 font-medium">
+                Lista de Convidados
+              </h1>
+              <p className="text-forest-dark/80 max-w-md leading-relaxed">
+                Confira abaixo a lista de convidados confirmados
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="px-4 py-2 rounded-xl bg-terracotta/20 text-terracotta-dark font-body font-medium hover:bg-terracotta/30 transition-colors"
+              aria-label="Sair do acesso admin"
+            >
+              Sair
+            </button>
+          </div>
 
           {isLoading && (
             <div className="text-center py-12" role="status" aria-live="polite">

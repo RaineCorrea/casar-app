@@ -41,7 +41,11 @@ export default function InputForm() {
       reset();
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.includes("23505")) {
+        if (error.message.includes("GuestList_email_key")) {
+          toastError("Este e-mail já está cadastrado.");
+        } else if (error.message.includes("guestlist_telefone_unique")) {
+          toastError("Este telefone já está cadastrado.");
+        } else if (error.message.includes("23505")) {
           toastError("Este nome já foi confirmado.");
         } else {
           toastError("Erro ao enviar confirmação. Tente novamente.");
@@ -203,7 +207,8 @@ export default function InputForm() {
               <span
                 className="absolute inset-0 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500"
                 style={{
-                  background: "linear-gradient(to right, var(--color-terracotta), var(--color-terracotta-dark))",
+                  background:
+                    "linear-gradient(to right, var(--color-terracotta), var(--color-terracotta-dark))",
                 }}
               />
               <span className="relative flex items-center justify-center gap-2">

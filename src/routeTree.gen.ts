@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as Lista2026RouteImport } from './routes/lista2026'
 import { Route as DefaultRouteImport } from './routes/_default'
 import { Route as DefaultIndexRouteImport } from './routes/_default/index'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Lista2026Route = Lista2026RouteImport.update({
   id: '/lista2026',
   path: '/lista2026',
@@ -31,32 +37,43 @@ const DefaultIndexRoute = DefaultIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof DefaultIndexRoute
   '/lista2026': typeof Lista2026Route
+  '/login': typeof LoginRoute
 }
 export interface FileRoutesByTo {
   '/lista2026': typeof Lista2026Route
+  '/login': typeof LoginRoute
   '/': typeof DefaultIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_default': typeof DefaultRouteWithChildren
   '/lista2026': typeof Lista2026Route
+  '/login': typeof LoginRoute
   '/_default/': typeof DefaultIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/lista2026'
+  fullPaths: '/' | '/lista2026' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/lista2026' | '/'
-  id: '__root__' | '/_default' | '/lista2026' | '/_default/'
+  to: '/lista2026' | '/login' | '/'
+  id: '__root__' | '/_default' | '/lista2026' | '/login' | '/_default/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   DefaultRoute: typeof DefaultRouteWithChildren
   Lista2026Route: typeof Lista2026Route
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lista2026': {
       id: '/lista2026'
       path: '/lista2026'
@@ -95,7 +112,17 @@ const DefaultRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   DefaultRoute: DefaultRouteWithChildren,
   Lista2026Route: Lista2026Route,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
