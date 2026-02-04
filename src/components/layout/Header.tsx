@@ -18,6 +18,7 @@ export default function Header() {
   const navItems = [
     { to: "home", label: "Início" },
     { to: "location", label: "Localização" },
+    { to: "products", label: "Lista de Presentes" },
     { to: "rsvp", label: "Confirmar Presença" },
   ];
 

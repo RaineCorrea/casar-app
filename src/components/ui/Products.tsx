@@ -1,7 +1,37 @@
-import { useProducts } from "../../services/supabase/products"
+import { useState } from "react"
+import { useProductsInfinite, type ProductsSortBy } from "../../services/supabase/products"
+
+type SortOption = {
+  value: ProductsSortBy
+  label: string
+}
+
+const sortOptions: SortOption[] = [
+  { value: 'preco_desc', label: 'Maior Preço' },
+  { value: 'preco_asc', label: 'Menor Preço' },
+  { value: 'descricao_asc', label: 'A-Z' }
+]
 
 export default function Products() {
-  const { data: products, isLoading, error } = useProducts()
+  const [sortBy, setSortBy] = useState<ProductsSortBy>('descricao_asc')
+
+  const {
+    data,
+    isLoading,
+    error,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage
+  } = useProductsInfinite(sortBy)
+
+  const allProducts = data?.pages.flatMap(page => page.products) ?? []
+  const totalCount = data?.pages[0]?.totalCount ?? 0
+
+  function handleLoadMore() {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }
 
   function formatPrice(price: number): string {
     return new Intl.NumberFormat("pt-BR", {
@@ -11,7 +41,7 @@ export default function Products() {
   }
 
   return (
-    <section aria-labelledby="products-heading" className="py-16 px-6 bg-wheat/30">
+    <section id="products" aria-labelledby="products-heading" className="py-16 px-6 bg-wheat/30">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2 id="products-heading" className="font-display text-forest text-4xl md:text-5xl mb-4 font-medium">
@@ -24,6 +54,21 @@ export default function Products() {
           </p>
         </div>
 
+        <div className="mb-8 flex justify-end">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value as ProductsSortBy)}
+            className="px-4 py-2 rounded-xl border-2 border-forest/20 bg-cream text-forest font-body focus:outline-none focus:ring-2 focus:ring-forest/50"
+            aria-label="Ordenar produtos"
+          >
+            {sortOptions.map(option => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {isLoading ? (
           <div className="text-center py-20" role="status" aria-live="polite">
             <div className="inline-block animate-spin rounded-full h-20 w-20 border-4 border-sage-light border-t-forest" aria-hidden="true"></div>
@@ -33,13 +78,14 @@ export default function Products() {
           <div className="text-center py-20 bg-terracotta/10 border-2 border-terracotta rounded-3xl">
             <p className="text-terracotta-dark font-body text-lg">{error.message}</p>
           </div>
-        ) : !products || products.length === 0 ? (
+        ) : allProducts.length === 0 ? (
           <div className="text-center py-20 bg-cream/80 rounded-3xl">
             <p className="text-forest-dark font-body text-lg">Nenhum produto disponível no momento.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {products.map((product) => (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {allProducts.map((product) => (
               <article
                 key={product.id}
                 className="bg-cream/95 backdrop-blur-sm rounded-3xl shadow-soft overflow-hidden hover:shadow-lifted transition-all duration-300 group"
@@ -100,6 +146,46 @@ export default function Products() {
               </article>
             ))}
           </div>
+
+          {hasNextPage && (
+            <div className="mt-12 text-center">
+              <button
+                onClick={handleLoadMore}
+                disabled={isFetchingNextPage}
+                className="inline-flex items-center gap-2 px-8 py-4 bg-forest text-cream font-body text-lg rounded-xl hover:bg-forest-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-soft"
+              >
+                {isFetchingNextPage ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-cream border-t-transparent" aria-hidden="true"></div>
+                    Carregando...
+                  </>
+                ) : (
+                  <>
+                    Carregar Mais Produtos
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </>
+                )}
+              </button>
+
+              <p className="mt-4 text-forest/70 font-body text-sm">
+                Mostrando {allProducts.length} de {totalCount} produtos
+              </p>
+            </div>
+          )}
+        </>
         )}
 
         <div className="mt-16 pt-8 border-t border-forest/20 text-center">
