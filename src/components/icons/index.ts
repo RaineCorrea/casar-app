@@ -24,3 +24,8 @@ export { OndaSuperiorDireita } from "./OndaSuperiorDireita";
 export { FolhaPequena } from "./FolhaPequena";
 export { OrnamentoCoracao } from "./OrnamentoCoracao";
 export { FolhaCanto } from "./FolhaCanto";
+export { IconeX } from "./IconeX";
+export { IconeCarrinho } from "./IconeCarrinho";
+export { IconeCarrinhoVazio } from "./IconeCarrinhoVazio";
+export { IconeLixeira } from "./IconeLixeira";
+export { IconeWhatsApp } from "./IconeWhatsApp";

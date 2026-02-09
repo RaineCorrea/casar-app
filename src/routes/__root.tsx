@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
+import { CartProvider } from '../components/contexts/CartContext'
 import '../index.css'
 
 export const Route = createRootRouteWithContext<{
@@ -54,7 +55,9 @@ function RootComponent() {
   return (
     <RootDocument>
       <QueryClientProvider client={queryClient!}>
-        <Outlet />
+        <CartProvider>
+          <Outlet />
+        </CartProvider>
       </QueryClientProvider>
     </RootDocument>
   )

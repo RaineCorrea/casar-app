@@ -1,10 +1,14 @@
 import { Link } from "react-scroll";
 import { useState, useEffect } from "react";
+import { useCart } from "../contexts/CartContext";
+import { IconeCarrinho } from "../icons";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const { itemCount, openCart } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -81,36 +85,72 @@ export default function Header() {
           ))}
         </div>
 
-        {/* Mobile Menu Button */}
         <button
-          className="md:hidden flex flex-col items-center justify-center w-10 h-10 gap-1.5"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          aria-label="Toggle menu"
+          onClick={openCart}
+          className="hidden md:flex relative p-2 hover:bg-white/10 rounded-lg transition items-center justify-center cursor-pointer"
+          aria-label="Ver carrinho de compras"
         >
-          <span
-            className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+          <IconeCarrinho
+            className={`w-6 h-6 transition-colors duration-300 ${
               scrolled ? "text-forest-dark" : "text-cream"
-            } ${mobileMenuOpen ? "rotate-45 translate-y-2" : ""}`}
+            }`}
           />
-          <span
-            className={`w-6 h-0.5 bg-current transition-all duration-300 ${
-              scrolled ? "text-forest-dark" : "text-cream"
-            } ${mobileMenuOpen ? "opacity-0" : ""}`}
-          />
-          <span
-            className={`w-6 h-0.5 bg-current transition-all duration-300 ${
-              scrolled ? "text-forest-dark" : "text-cream"
-            } ${mobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`}
-          />
+          {itemCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-pink-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              {itemCount}
+            </span>
+          )}
         </button>
+
+        <div className="md:hidden flex items-center gap-2">
+          <button
+            className="flex flex-col items-center justify-center w-10 h-10 gap-1.5"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span
+              className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+                scrolled ? "text-forest-dark" : "text-cream"
+              } ${mobileMenuOpen ? "rotate-45 translate-y-2" : ""}`}
+            />
+            <span
+              className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+                scrolled ? "text-forest-dark" : "text-cream"
+              } ${mobileMenuOpen ? "opacity-0" : ""}`}
+            />
+            <span
+              className={`w-6 h-0.5 bg-current transition-all duration-300 ${
+                scrolled ? "text-forest-dark" : "text-cream"
+              } ${mobileMenuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+            />
+          </button>
+
+          <button
+            onClick={() => {
+              openCart();
+              setMobileMenuOpen(false);
+            }}
+            className="relative p-2 hover:bg-white/10 rounded-lg transition items-center justify-center cursor-pointer"
+            aria-label="Ver carrinho de compras"
+          >
+            <IconeCarrinho
+              className={`w-6 h-6 transition-colors duration-300 ${
+                scrolled ? "text-forest-dark" : "text-cream"
+              }`}
+            />
+            {itemCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-pink-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                {itemCount}
+              </span>
+            )}
+          </button>
+        </div>
       </nav>
 
       {/* Mobile Menu Dropdown */}
       <div
         className={`md:hidden absolute top-full left-0 right-0 transition-all duration-300 overflow-hidden ${
-          mobileMenuOpen
-            ? "max-h-96 opacity-100"
-            : "max-h-0 opacity-0"
+          mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
         }`}
         style={
           mobileMenuOpen
@@ -123,7 +163,7 @@ export default function Header() {
             : undefined
         }
       >
-        <nav className="flex flex-col items-center py-6 gap-6">
+        <nav className="flex flex-col items-center py-8 gap-6">
           {navItems.map((item) => (
             <Link
               key={item.to}
@@ -137,7 +177,9 @@ export default function Header() {
                 setMobileMenuOpen(false);
               }}
               className={`relative cursor-pointer font-body text-base tracking-widest uppercase transition-all duration-300 ${
-                activeSection === item.to ? "text-terracotta font-semibold" : "text-forest-dark hover:text-terracotta"
+                activeSection === item.to
+                  ? "text-terracotta font-semibold"
+                  : "text-forest-dark hover:text-terracotta"
               }`}
             >
               {item.label}

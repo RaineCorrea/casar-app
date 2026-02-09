@@ -202,7 +202,7 @@ export default function InputForm() {
             <button
               type="submit"
               disabled={addGuest.isPending}
-              className="group cursor-pointer relative w-full mt-8 py-4 px-8 bg-forest text-cream font-display text-lg tracking-wide rounded-xl overflow-hidden transition-all duration-300 hover:bg-forest-dark hover:shadow-lifted disabled:opacity-70 disabled:cursor-not-allowed"
+              className="group cursor-pointer relative w-full mt-8 py-3 sm:py-4 px-6 sm:px-8 bg-forest text-cream font-display text-base sm:text-lg tracking-wide rounded-xl overflow-hidden transition-all duration-300 hover:bg-forest-dark hover:shadow-lifted disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <span
                 className="absolute inset-0 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500"
