@@ -50,7 +50,7 @@ function Lista2026() {
             <button
               type="button"
               onClick={handleLogout}
-              className="px-4 py-2 rounded-xl bg-terracotta/20 text-terracotta-dark font-body font-medium hover:bg-terracotta/30 transition-colors"
+              className="px-4 py-2 rounded-xl bg-terracotta/20 text-terracotta-dark font-body font-medium hover:bg-terracotta/30 transition-colors cursor-pointer"
               aria-label="Sair do acesso admin"
             >
               Sair
@@ -132,6 +132,30 @@ function Lista2026() {
               ))}
             </div>
           )}
+        </div>
+
+        <div className="mt-6 text-center">
+          <button
+            type="button"
+            onClick={() => (window.location.href = "/")}
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-forest text-cream hover:bg-forest-dark hover:shadow-soft font-body text-sm font-semibold transition-all duration-300 cursor-pointer"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            Voltar para a home
+          </button>
         </div>
       </div>
     </div>

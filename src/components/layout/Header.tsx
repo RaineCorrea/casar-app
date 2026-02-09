@@ -2,11 +2,13 @@ import { Link } from "react-scroll";
 import { useState, useEffect } from "react";
 import { useCart } from "../contexts/CartContext";
 import { IconeCarrinho } from "../icons";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const { itemCount, openCart } = useCart();
 
@@ -83,6 +85,18 @@ export default function Header() {
               />
             </Link>
           ))}
+
+          <button
+            onClick={() => navigate({ to: "/lista2026" })}
+            className={`relative cursor-pointer font-body text-sm tracking-widest uppercase transition-all duration-300 ${
+              scrolled
+                ? "text-forest-dark hover:text-terracotta"
+                : "text-cream/90 hover:text-cream"
+            } font-semibold`}
+          >
+            LISTA CONFIRMADOS
+            <span className="absolute -bottom-1 left-0 h-px bg-terracotta w-full transition-all duration-300" />
+          </button>
         </div>
 
         <button
@@ -185,6 +199,17 @@ export default function Header() {
               {item.label}
             </Link>
           ))}
+
+          <button
+            onClick={() => {
+              navigate({ to: "/lista2026" });
+              setMobileMenuOpen(false);
+            }}
+            className="relative cursor-pointer font-body text-base tracking-widest uppercase transition-all duration-300 text-terracotta font-semibold"
+          >
+            LISTA CONFIRMADOS
+            <span className="absolute -bottom-1 left-0 h-px bg-terracotta w-full transition-all duration-300" />
+          </button>
         </nav>
       </div>
 

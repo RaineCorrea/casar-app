@@ -19,11 +19,9 @@ export const Route = createFileRoute("/login")({
 
 function AdminLogin() {
   useEffect(() => {
-    // Verificar se já está autenticado (apenas no cliente)
     const token = localStorage.getItem("admin_token");
 
     if (token && validateAdminToken(token)) {
-      // Redirecionar para lista admin se já estiver logado
       window.location.href = "/lista2026";
     }
   }, []);
@@ -39,22 +37,14 @@ function AdminLogin() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
-      console.log("Tentando login com:", data.username);
       const result = await adminLogin({ data });
-      console.log("Resultado do login:", result);
       return result;
     },
     onSuccess: (result) => {
-      console.log("Login onSuccess chamado com:", result);
       if (result.success) {
-        // Salvar token no localStorage
         localStorage.setItem("admin_token", result.token);
-        console.log("Token salvo, redirecionando...");
-
-        // Forçar recarregamento da página para a rota lista2026
         window.location.href = "/lista2026";
       } else {
-        console.log("Login falhou:", result.error);
         setError("root", {
           type: "manual",
           message: result.error,
@@ -62,7 +52,6 @@ function AdminLogin() {
       }
     },
     onError: (error) => {
-      console.error("Erro na mutação de login:", error);
       setError("root", {
         type: "manual",
         message: error instanceof Error ? error.message : "Erro ao fazer login",
@@ -93,7 +82,6 @@ function AdminLogin() {
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* Erro de login */}
             {errors.root && (
               <div
                 className="bg-terracotta/10 border-2 border-terracotta rounded-xl p-4"
@@ -105,7 +93,6 @@ function AdminLogin() {
               </div>
             )}
 
-            {/* Username */}
             <div>
               <label htmlFor="username" className="block mb-2 font-body text-forest-dark font-medium">
                 Nome de Usuário
@@ -127,7 +114,6 @@ function AdminLogin() {
               )}
             </div>
 
-            {/* Password */}
             <div>
               <label htmlFor="password" className="block mb-2 font-body text-forest-dark font-medium">
                 Senha
@@ -149,11 +135,10 @@ function AdminLogin() {
               )}
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loginMutation.isPending}
-              className="w-full py-3 px-6 rounded-xl bg-forest text-cream font-body font-medium hover:bg-forest-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-soft"
+              className="w-full py-3 px-6 rounded-xl bg-forest text-cream font-body font-medium hover:bg-forest-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-soft cursor-pointer"
               aria-busy={loginMutation.isPending}
             >
               {loginMutation.isPending ? "Entrando..." : "Entrar"}
@@ -164,8 +149,22 @@ function AdminLogin() {
             <button
               type="button"
               onClick={() => (window.location.href = "/")}
-              className="font-body text-forest-dark/80 hover:text-forest-dark transition-colors text-sm underline"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-forest text-cream hover:bg-forest-dark hover:shadow-soft font-body text-sm font-semibold transition-all duration-300 cursor-pointer"
             >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
               Voltar para a home
             </button>
           </div>
