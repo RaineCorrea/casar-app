@@ -3,10 +3,11 @@ import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import netlify from "@netlify/vite-plugin-tanstack-start";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tsConfigPaths(), tanstackStart(), react(), tailwindcss()],
+  plugins: [tsConfigPaths(), tanstackStart(), netlify(), react(), tailwindcss()],
   server: {
     port: 5173,
   },
