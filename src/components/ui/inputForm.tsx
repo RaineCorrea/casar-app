@@ -109,6 +109,7 @@ export default function InputForm() {
                 <input
                   id="name"
                   type="text"
+                  autoComplete="name"
                   {...register("name")}
                   placeholder="Digite seu nome completo"
                   aria-describedby={errors.name ? "name-error" : undefined}
@@ -142,6 +143,8 @@ export default function InputForm() {
                 <input
                   id="telefone"
                   type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
                   {...register("telefone")}
                   placeholder="(00) 00000-0000"
                   aria-describedby={
@@ -177,6 +180,7 @@ export default function InputForm() {
                 <input
                   id="email"
                   type="email"
+                  autoComplete="email"
                   {...register("email")}
                   placeholder="seu@email.com"
                   aria-describedby={errors.email ? "email-error" : undefined}

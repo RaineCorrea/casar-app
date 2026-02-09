@@ -120,7 +120,9 @@ export default function Header() {
           <button
             className="flex flex-col items-center justify-center w-10 h-10 gap-1.5"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
+            aria-label={mobileMenuOpen ? "Fechar menu de navegação" : "Abrir menu de navegação"}
           >
             <span
               className={`w-6 h-0.5 bg-current transition-all duration-300 ${
@@ -163,6 +165,7 @@ export default function Header() {
 
       {/* Mobile Menu Dropdown */}
       <div
+        id="mobile-menu"
         className={`md:hidden absolute top-full left-0 right-0 transition-all duration-300 overflow-hidden ${
           mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
         }`}

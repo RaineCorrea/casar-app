@@ -9,13 +9,13 @@ export function Main() {
   const countDownDate = new Date("2026-11-18T00:00:00");
 
   return (
-    <>
+    <main id="main-content">
       <Welcome />
       <Countdown targetDate={countDownDate} />
       <Location />
       <Products/>
       <InputForm />
       <CartDrawer />
-    </>
+    </main>
   );
 }

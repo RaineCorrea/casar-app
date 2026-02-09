@@ -40,6 +40,11 @@ export default function Welcome() {
       </div>
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
+        {/* H1 principal para acessibilidade - visível apenas para leitores de tela */}
+        <h1 className="sr-only">
+          Casamento de Matheus e Nicolly - 18 de Novembro de 2026
+        </h1>
+
         <div
           className="mb-8 opacity-0 animate-fade-up"
           style={{ animationDelay: "0.2s" }}
@@ -47,7 +52,7 @@ export default function Welcome() {
           <FlorDecorativa />
         </div>
 
-        <h1
+        <h2
           className="font-accent text-cream text-8xl md:text-9xl mb-4 opacity-0 animate-fade-up tracking-wide"
           style={{
             animationDelay: "0.4s",
@@ -55,7 +60,7 @@ export default function Welcome() {
           }}
         >
           Matheus & Nicolly
-        </h1>
+        </h2>
 
         <div
           className="opacity-0 animate-fade-up mb-12"
