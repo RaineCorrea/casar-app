@@ -9,6 +9,7 @@ import {
 import { QueryClientProvider } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { CartProvider } from '../components/contexts/CartContext'
+import { SkipLink } from '../components/ui/SkipLink'
 import '../index.css'
 
 export const Route = createRootRouteWithContext<{
@@ -22,6 +23,49 @@ export const Route = createRootRouteWithContext<{
       {
         name: 'viewport',
         content: 'width=device-width, initial-scale=1',
+      },
+      // SEO - Meta tags
+      {
+        name: 'description',
+        content: 'Confirme sua presença e escolha presentes para o casamento de Matheus & Nicolly - 18 de Novembro de 2026',
+      },
+      {
+        name: 'keywords',
+        content: 'casamento, lista de presentes, RSVP, Matheus, Nicolly, confirmação de presença',
+      },
+      {
+        name: 'author',
+        content: 'Matheus & Nicolly',
+      },
+      // Open Graph / Facebook
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+      {
+        property: 'og:title',
+        content: 'Matheus & Nicolly - Nosso Casamento',
+      },
+      {
+        property: 'og:description',
+        content: 'Confirme sua presença e escolha presentes para o nosso casamento - 18 de Novembro de 2026',
+      },
+      {
+        property: 'og:image',
+        content: '/og-image.jpg',
+      },
+      // Twitter
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        name: 'twitter:title',
+        content: 'Matheus & Nicolly - Nosso Casamento',
+      },
+      {
+        name: 'twitter:description',
+        content: 'Confirme sua presença e escolha presentes para o nosso casamento',
       },
     ],
     title: 'Matheus & Nicolly - Nosso Casamento',
@@ -70,7 +114,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <SkipLink />
+        <div id="main-content" tabIndex={-1}>
+          {children}
+        </div>
         <Scripts />
       </body>
     </html>
@@ -79,9 +126,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 
 function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-wheat/30 px-6">
+    <div className="min-h-screen flex items-center justify-center bg-wheat/30 px-6" role="main" aria-labelledby="notfound-title">
       <div className="text-center">
-        <h1 className="font-display text-forest text-6xl md:text-8xl mb-6 font-medium">
+        <h1 id="notfound-title" className="font-display text-forest text-6xl md:text-8xl mb-6 font-medium">
           404
         </h1>
         <p className="font-body text-forest-dark/80 text-xl md:text-2xl mb-8 max-w-md mx-auto">
@@ -89,7 +136,7 @@ function NotFound() {
         </p>
         <a
           href="/"
-          className="inline-block px-8 py-3 bg-forest text-cream font-body text-lg rounded-xl hover:bg-forest-dark transition-colors duration-300"
+          className="inline-block px-8 py-3 bg-forest text-cream font-body text-lg rounded-xl hover:bg-forest-dark transition-colors duration-300 hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2"
         >
           Voltar ao Início
         </a>
