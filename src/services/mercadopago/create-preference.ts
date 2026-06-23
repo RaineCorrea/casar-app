@@ -21,7 +21,7 @@ export const createPreference = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { items, backUrls } = data;
 
-    const accessToken = process.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
+    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
 
     if (!accessToken) {
       throw new Error("Mercado Pago credentials not configured");
