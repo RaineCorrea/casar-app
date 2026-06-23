@@ -1,11 +1,15 @@
 import { useCart } from "../contexts/CartContext";
-import { useEffect } from "react";
 import {
   IconeX,
   IconeCarrinhoVazio,
   IconeLixeira,
   IconeWhatsApp,
 } from "../icons";
+import {
+  Sheet,
+  SheetContent,
+  SheetClose,
+} from "./sheet";
 
 export function CartDrawer() {
   const {
@@ -47,56 +51,26 @@ export function CartDrawer() {
     window.open(whatsappUrl, "_blank");
   };
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        closeCart();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, closeCart]);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
-
   return (
-    <>
-      <div
-        className={`fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={closeCart}
-        aria-hidden="true"
-      />
-
-      <div
-        className={`fixed top-0 right-0 h-full w-full sm:max-w-md bg-cream z-50 shadow-2xl transform transition-transform duration-300 ease-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+    <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-md bg-cream shadow-2xl h-full"
+        showCloseButton={false}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between p-4 sm:p-6 border-b border-forest/20">
             <h2 className="font-display text-forest text-xl sm:text-2xl font-medium">
               Seu Carrinho
             </h2>
-            <button
-              onClick={closeCart}
-              className="p-2 hover:bg-forest/10 rounded-lg transition-colors cursor-pointer"
-              aria-label="Fechar carrinho"
-            >
-              <IconeX />
-            </button>
+            <SheetClose asChild>
+              <button
+                className="p-2 hover:bg-forest/10 rounded-lg transition-colors cursor-pointer"
+                aria-label="Fechar carrinho"
+              >
+                <IconeX />
+              </button>
+            </SheetClose>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
@@ -227,7 +201,7 @@ export function CartDrawer() {
             </div>
           )}
         </div>
-      </div>
-    </>
+      </SheetContent>
+    </Sheet>
   );
 }
