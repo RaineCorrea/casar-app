@@ -24,9 +24,11 @@ interface CreatePreferenceResponse {
 export const createPreference = createServerFn({ method: "POST" })
   .inputValidator((data: CreatePreferenceData) => data)
   .handler(async ({ data }) => {
-    const accessToken = env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
+    // Em server functions, usar process.env ou import.meta.env
+    const accessToken = import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
 
     if (!accessToken) {
+      console.error("Mercado Pago ACCESS_TOKEN não encontrado");
       throw new Error("Mercado Pago credentials not configured");
     }
 
