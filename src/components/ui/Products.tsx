@@ -12,6 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./select";
+import { Card } from "./card";
+import { Button } from "./button";
 
 type SortOption = {
   value: ProductsSortBy;
@@ -54,9 +56,9 @@ function AddToCartButton({
   };
 
   return (
-    <button
+    <Button
       onClick={handleAddToCart}
-      className={`group/add w-full py-2.5 sm:py-3 px-3 sm:px-6 font-body text-center rounded-xl transition-all duration-300 cursor-pointer ${
+      className={`group/add w-full py-2.5 sm:py-3 px-3 sm:px-6 font-body text-center rounded-xl transition-all duration-300 ${
         added
           ? "bg-green-500 text-white"
           : "bg-forest text-cream hover:bg-forest-dark hover:shadow-soft"
@@ -76,7 +78,7 @@ function AddToCartButton({
           <IconeCarrinho className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
         </span>
       )}
-    </button>
+    </Button>
   );
 }
 
@@ -176,7 +178,7 @@ export default function Products() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {allProducts.map((product) => (
-                <article
+                <Card
                   key={product.id}
                   className="bg-cream/95 backdrop-blur-sm rounded-3xl shadow-soft overflow-hidden hover:shadow-lifted transition-all duration-300 group"
                   aria-labelledby={`product-${product.id}-name`}
@@ -211,13 +213,13 @@ export default function Products() {
                       link={product.link}
                     />
                   </div>
-                </article>
+                </Card>
               ))}
             </div>
 
             {hasNextPage && (
               <div className="mt-12 text-center">
-                <button
+                <Button
                   onClick={handleLoadMore}
                   disabled={isFetchingNextPage}
                   className="inline-flex items-center gap-2 px-8 py-4 bg-forest text-cream font-body text-lg rounded-xl hover:bg-forest-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-soft"
@@ -249,7 +251,7 @@ export default function Products() {
                       </svg>
                     </>
                   )}
-                </button>
+                </Button>
 
                 <p className="mt-4 text-forest/70 font-body text-sm">
                   Mostrando {allProducts.length} de {totalCount} produtos
