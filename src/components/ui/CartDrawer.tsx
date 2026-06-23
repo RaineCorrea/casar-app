@@ -42,18 +42,16 @@ export function CartDrawer() {
       const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
 
       const response = await createPreference({
-        data: {
-          items: items.map((item) => ({
-            id: item.id,
-            title: item.descricao || "Produto",
-            quantity: item.quantity,
-            unit_price: Number(item.preco),
-          })),
-          backUrls: {
-            success: `${origin}/checkout/success`,
-            failure: `${origin}/checkout/failure`,
-            pending: `${origin}/checkout/pending`,
-          },
+        items: items.map((item) => ({
+          id: item.id,
+          title: item.descricao || "Produto",
+          quantity: item.quantity,
+          unit_price: Number(item.preco),
+        })),
+        backUrls: {
+          success: `${origin}/checkout/success`,
+          failure: `${origin}/checkout/failure`,
+          pending: `${origin}/checkout/pending`,
         },
       });
 
