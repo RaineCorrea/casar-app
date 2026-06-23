@@ -9,11 +9,10 @@ import {
 import {
   Sheet,
   SheetContent,
-  SheetClose,
 } from "./sheet";
 import { createPreference } from "../../services/mercadopago/create-preference";
-import { toastError, totastSuccess } from "../../utils/toast";
-import { env } from "../../schemas/env";
+import { saveOrderAfterCheckout } from "../../services/supabase/orders";
+import { toastError, toastSuccess } from "../../utils/toast";
 
 export function CartDrawer() {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,23 +41,43 @@ export function CartDrawer() {
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
 
-      const { data } = await createPreference({
-        accessToken: env.VITE_MERCADO_PAGO_ACCESS_TOKEN,
-        items: items.map((item) => ({
-          id: item.id,
-          title: item.descricao || "Produto",
-          quantity: item.quantity,
-          unit_price: item.preco,
-        })),
-        backUrls: {
-          success: `${origin}/checkout/success`,
-          failure: `${origin}/checkout/failure`,
-          pending: `${origin}/checkout/pending`,
+      const response = await createPreference({
+        data: {
+          items: items.map((item) => ({
+            id: item.id,
+            title: item.descricao || "Produto",
+            quantity: item.quantity,
+            unit_price: Number(item.preco),
+          })),
+          backUrls: {
+            success: `${origin}/checkout/success`,
+            failure: `${origin}/checkout/failure`,
+            pending: `${origin}/checkout/pending`,
+          },
         },
       });
 
+      // Salvar pedido no Supabase ANTES de redirecionar
+      try {
+        await saveOrderAfterCheckout({
+          items: items.map((item) => ({
+            id: item.id,
+            title: item.descricao || "Produto",
+            quantity: item.quantity,
+            unit_price: Number(item.preco),
+            image: item.image,
+          })),
+          total: total,
+          mpPreferenceId: response.preference_id,
+        });
+        console.log("Pedido salvo no Supabase com sucesso");
+      } catch (saveError) {
+        console.error("Erro ao salvar pedido (continuando para checkout):", saveError);
+        // Não bloqueia o checkout se falhar ao salvar no Supabase
+      }
+
       // Redirecionar para checkout Mercado Pago
-      window.location.href = data.init_point;
+      window.location.href = response.init_point;
     } catch (error) {
       console.error("Erro ao criar preferência:", error);
       toastError("Erro ao criar preferência de pagamento. Tente novamente.");
@@ -79,14 +98,13 @@ export function CartDrawer() {
             <h2 className="font-display text-forest text-xl sm:text-2xl font-medium">
               Seu Carrinho
             </h2>
-            <SheetClose asChild>
-              <button
-                className="p-2 hover:bg-forest/10 rounded-lg transition-colors cursor-pointer"
-                aria-label="Fechar carrinho"
-              >
-                <IconeX />
-              </button>
-            </SheetClose>
+            <button
+              onClick={closeCart}
+              className="p-2 hover:bg-forest/10 rounded-lg transition-colors cursor-pointer"
+              aria-label="Fechar carrinho"
+            >
+              <IconeX />
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 sm:p-6">
