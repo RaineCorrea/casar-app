@@ -87,7 +87,7 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    let query = supabase.from("Orders").select();
+    let query = supabase.from("Orders").select("*");
 
     if (data.orderId) {
       query = query.eq("id", data.orderId);
@@ -218,12 +218,14 @@ export const saveOrderAfterCheckout = async (
   params: CreateOrderFromCartParams
 ): Promise<Order> => {
   const order = await createOrder({
-    items: params.items,
-    total: params.total,
-    mp_preference_id: params.mpPreferenceId,
-    customer_name: params.customerInfo?.name,
-    customer_email: params.customerInfo?.email,
-    customer_phone: params.customerInfo?.phone,
+    data: {
+      items: params.items,
+      total: params.total,
+      mp_preference_id: params.mpPreferenceId,
+      customer_name: params.customerInfo?.name,
+      customer_email: params.customerInfo?.email,
+      customer_phone: params.customerInfo?.phone,
+    },
   });
 
   return order;
@@ -233,7 +235,7 @@ export const checkOrderStatus = async (
   preferenceId: string
 ): Promise<Order | null> => {
   try {
-    const order = await getOrderByPreferenceId(preferenceId);
+    const order = await getOrderByPreferenceId({ data: preferenceId });
     return order;
   } catch {
     return null;
