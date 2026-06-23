@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { guestSchema, type GuestFormData } from "../../schemas/guestSchema";
-import { toastError, totastSuccess } from "../../utils/toast";
+import { toastError, toastSuccess } from "../../utils/toast";
 import { Element } from "react-scroll";
 import { Input } from "./input";
 import { Label } from "./label";
@@ -40,7 +40,7 @@ export default function InputForm() {
         telefone: data.telefone,
         email: data.email,
       });
-      totastSuccess("Confirmação enviada com sucesso!");
+      toastSuccess("Confirmação enviada com sucesso!");
       reset();
     } catch (error) {
       if (error instanceof Error) {
