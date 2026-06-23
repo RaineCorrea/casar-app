@@ -13,6 +13,7 @@ import {
 } from "./sheet";
 import { createPreference } from "../../services/mercadopago/create-preference";
 import { toastError, totastSuccess } from "../../utils/toast";
+import { env } from "../../schemas/env";
 
 export function CartDrawer() {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,13 +40,21 @@ export function CartDrawer() {
     setIsLoading(true);
 
     try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
+
       const { data } = await createPreference({
+        accessToken: env.VITE_MERCADO_PAGO_ACCESS_TOKEN,
         items: items.map((item) => ({
           id: item.id,
           title: item.descricao || "Produto",
           quantity: item.quantity,
           unit_price: item.preco,
         })),
+        backUrls: {
+          success: `${origin}/checkout/success`,
+          failure: `${origin}/checkout/failure`,
+          pending: `${origin}/checkout/pending`,
+        },
       });
 
       // Redirecionar para checkout Mercado Pago

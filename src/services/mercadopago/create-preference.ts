@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { env } from "@/schemas/env";
 
 interface PreferenceItem {
   id: string;
@@ -9,10 +8,12 @@ interface PreferenceItem {
 }
 
 interface CreatePreferenceData {
+  accessToken: string;
   items: PreferenceItem[];
-  payer?: {
-    name: string;
-    email: string;
+  backUrls: {
+    success: string;
+    failure: string;
+    pending: string;
   };
 }
 
@@ -24,13 +25,14 @@ interface CreatePreferenceResponse {
 export const createPreference = createServerFn({ method: "POST" })
   .inputValidator((data: CreatePreferenceData) => data)
   .handler(async ({ data }) => {
-    // Em server functions, usar process.env ou import.meta.env
-    const accessToken = import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
+    const { accessToken, items, backUrls } = data;
 
     if (!accessToken) {
-      console.error("Mercado Pago ACCESS_TOKEN não encontrado");
+      console.error("Mercado Pago ACCESS_TOKEN não fornecido");
       throw new Error("Mercado Pago credentials not configured");
     }
+
+    console.log("Criando preferência com itens:", items);
 
     const response = await fetch(
       "https://api.mercadopago.com/checkout/preferences",
@@ -41,12 +43,8 @@ export const createPreference = createServerFn({ method: "POST" })
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
-          items: data.items,
-          back_urls: {
-            success: `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'}/checkout/success`,
-            failure: `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'}/checkout/failure`,
-            pending: `${typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173'}/checkout/pending`,
-          },
+          items: items,
+          back_urls: backUrls,
           auto_return: "approved",
           binary_mode: true,
         }),
@@ -55,12 +53,23 @@ export const createPreference = createServerFn({ method: "POST" })
 
     if (!response.ok) {
       const error = await response.text();
+      console.error("Mercado Pago API error:", error);
       throw new Error(`Mercado Pago error: ${error}`);
     }
 
     const preference = await response.json();
+    console.log("Preference criada:", preference);
+
+    // Retornar apenas as propriedades necessárias
+    const initPoint = preference.init_point || preference.sandbox_init_point;
+
+    if (!initPoint) {
+      console.error("init_point não encontrado na resposta:", preference);
+      throw new Error("init_point não encontrado na resposta do Mercado Pago");
+    }
+
     return {
-      init_point: preference.init_point,
+      init_point: initPoint,
       preference_id: preference.id,
-    } as CreatePreferenceResponse;
+    };
   });
