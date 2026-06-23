@@ -15,7 +15,7 @@ export const Route = createFileRoute("/lista2026")({
 });
 
 function Lista2026() {
-  const { data: guests, isLoading, error, isFetching } = useGuestsWithRealtime();
+  const { data: guests, isLoading, error } = useGuestsWithRealtime();
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
@@ -112,14 +112,14 @@ function Lista2026() {
                         <div className="space-y-2 font-body text-sm text-forest-dark/80">
                           {guest.email && (
                             <div className="flex items-center gap-2">
-                              <IconeEmail className="w-4 h-4" aria-hidden="true" />
+                              <IconeEmail />
                               <span className="sr-only">E-mail:</span>
                               <span>{guest.email}</span>
                             </div>
                           )}
                           {guest.telefone && (
                             <div className="flex items-center gap-2">
-                              <IconeTelefone className="w-4 h-4" aria-hidden="true" />
+                              <IconeTelefone />
                               <span className="sr-only">Telefone:</span>
                               <span>{guest.telefone}</span>
                             </div>
