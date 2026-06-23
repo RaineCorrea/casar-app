@@ -1,6 +1,38 @@
 @import "tailwindcss";
 
 :root {
+  /* shadcn/ui CSS variables - mapeadas para cores do projeto */
+  --background: 250 248 243; /* cream */
+  --foreground: 15 35 24; /* forest-dark */
+
+  --card: 250 248 243; /* cream */
+  --card-foreground: 15 35 24; /* forest-dark */
+
+  --popover: 250 248 243; /* cream */
+  --popover-foreground: 15 35 24; /* forest-dark */
+
+  --primary: 30 58 47; /* forest */
+  --primary-foreground: 250 248 243; /* cream */
+
+  --secondary: 90 125 86; /* sage */
+  --secondary-foreground: 250 248 243; /* cream */
+
+  --muted: 245 230 211; /* wheat */
+  --muted-foreground: 61 90 58; /* sage-dark */
+
+  --accent: 181 98 58; /* terracotta */
+  --accent-foreground: 250 248 243; /* cream */
+
+  --destructive: 220 38 38;
+  --destructive-foreground: 250 248 243;
+
+  --border: 139 168 136; /* sage-light */
+  --input: 139 168 136; /* sage-light */
+  --ring: 181 98 58; /* terracotta */
+
+  --radius: 0.5rem;
+
+  /* Fontes customizadas do projeto */
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Cormorant Garamond", "Times New Roman", serif;
   --font-accent: "Tangerine", cursive;
