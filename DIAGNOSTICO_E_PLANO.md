@@ -1084,24 +1084,27 @@ ADMIN_PASSWORD=admin123456
 
 ### **FASE 3: Melhorias Supabase** (PRIORIDADE MÉDIA)
 
-**Progresso da Fase**: ▱▱▱▱▱▱▱▱▱▱ 0% Completo
+**Progresso da Fase**: ████████░░ 80% Completo
 
-- [ ] **3.1** Tabela de Pedidos
-  - [ ] Criar `supabase/migrations/002_create_orders_table.sql`
-  - [ ] Criar tabela `Orders`
-  - [ ] Configurar índices
-  - [ ] Ativar RLS
-  - [ ] Criar políticas de segurança
-  - [ ] Habilitar Realtime
-  - [ ] Executar migration no Supabase
-  - [ ] Commit `feat(supabase): criar tabela de pedidos`
+- [x] **3.1** Tabela de Pedidos ✅
+  - [x] Criar `supabase/migrations/002_create_orders_table.sql`
+  - [x] Criar tabela `Orders`
+  - [x] Configurar índices (user_id, status, created_at, mp_ids)
+  - [x] Ativar RLS
+  - [x] Criar políticas de segurança
+  - [x] Habilitar Realtime
+  - [x] Commit `feat(supabase): criar tabela de pedidos`
+  - [ ] Executar migration no Supabase (via Dashboard)
 
-- [ ] **3.2** Serviços de Pedidos
-  - [ ] Criar `src/services/supabase/orders.ts`
-  - [ ] Implementar hooks para pedidos
-  - [ ] Integrar com criação de preferência Mercado Pago
-  - [ ] Salvar pedidos no Supabase
-  - [ ] Commit `feat(supabase): implementar serviços de pedidos`
+- [x] **3.2** Serviços de Pedidos ✅
+  - [x] Criar `src/services/supabase/orders.ts`
+  - [x] Implementar hooks para pedidos (createOrder, updateOrderStatus, getOrderById, etc.)
+  - [x] Integrar com criação de preferência Mercado Pago
+  - [x] Salvar pedidos no Supabase após checkout
+  - [x] Modificar CartDrawer para salvar pedido antes de redirecionar
+  - [x] Modificar páginas de retorno (success/failure/pending) para mostrar detalhes
+  - [x] Commit `feat(supabase): implementar serviços de pedidos`
+  - [x] Commit `feat(supabase): integrar salvamento de pedidos no checkout`
 
 - [ ] **3.3** Autenticação de Usuários (Opcional)
   - [ ] Criar `src/components/auth/AuthProvider.tsx`
@@ -1118,7 +1121,7 @@ ADMIN_PASSWORD=admin123456
   - [ ] Atualizar URLs dos produtos
   - [ ] Commit `feat(storage): migrar imagens para Supabase Storage`
 
-- [ ] **3.5** Realtime para Pedidos
+- [ ] **3.5** Realtime para Pedidos (Opcional)
   - [ ] Implementar listener de atualizações
   - [ ] Atualizar UI em tempo real
   - [ ] Testar notificações Realtime
@@ -1214,16 +1217,52 @@ ADMIN_PASSWORD=admin123456
 
 **📊 Status Atual**:
 
-- Progresso Geral: ~75%
+- Progresso Geral: ~85%
 - FASE 1: ✅ CONCLUÍDA (100%)
 - FASE 2: ✅ CONCLUÍDA (100%)
-- FASE 3: ⏳ PENDENTE
+- FASE 3: 🔄 EM ANDAMENTO (80%)
 - FASE 4: ⏳ PENDENTE
 
 **🎯 Próximos Passos**:
 
-1. Revisar FASE 2 (opcional)
-2. Iniciar FASE 3: Melhorias Supabase OU FASE 4: Refinamentos
+1. Executar migration da tabela Orders no Supabase (via Dashboard)
+2. Finalizar FASE 3 com Storage para Imagens (opcional) OU passar para FASE 4
+
+---
+
+### **2026-06-23 - FASE 3 INICIADA**
+
+**✅ FASE 3 - PROGRESSO (80%)**:
+
+- Branch: `feature/fase3-supabase-improvements`
+- Migration `002_create_orders_table.sql` criada:
+  - Tabela Orders com campos para itens, total, status
+  - Campos para integração Mercado Pago (preference_id, payment_id, status)
+  - RLS configurado com políticas de segurança
+  - Índices criados para performance
+  - Realtime habilitado
+  - Trigger para updated_at automático
+  - Check constraint para status válido
+- Serviços de pedidos implementados (`src/services/supabase/orders.ts`):
+  - createOrder: criar novo pedido
+  - updateOrderStatus: atualizar status (usado por webhook)
+  - getOrderById: buscar pedido por ID
+  - getOrderByPreferenceId: buscar por preference_id
+  - listAllOrders: listar todos pedidos (admin)
+  - saveOrderAfterCheckout: salvar após checkout
+  - checkOrderStatus: verificar status do pedido
+- Integração com checkout:
+  - CartDrawer modificado para salvar pedido antes de redirecionar
+  - Páginas de retorno modificadas para mostrar detalhes do pedido
+  - Busca de status do pedido pelo preference_id
+- Correção de typo: `totastSuccess` → `toastSuccess`
+- 3 commits realizados
+- Push para GitHub realizado
+
+**⏳ PENDENTE - FASE 3**:
+- Executar migration no Supabase (via Dashboard SQL Editor)
+- Storage para Imagens (opcional)
+- Realtime para Pedidos (opcional)
 
 ---
 
