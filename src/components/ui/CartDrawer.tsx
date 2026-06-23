@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useCart } from "../contexts/CartContext";
 import {
   IconeX,
@@ -10,8 +11,11 @@ import {
   SheetContent,
   SheetClose,
 } from "./sheet";
+import { createPreference } from "../../services/mercadopago/create-preference";
+import { toastError, totastSuccess } from "../../utils/toast";
 
 export function CartDrawer() {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     items,
     total,
@@ -29,26 +33,29 @@ export function CartDrawer() {
     }).format(value);
   };
 
-  const handleCheckout = () => {
-    const itemsList = items
-      .map((item) => {
-        const subtotal = item.preco * item.quantity;
-        return `• ${item.descricao || "Produto"} (${
-          item.quantity
-        }x) - ${formatCurrency(subtotal)}`;
-      })
-      .join("\n");
+  const handleCheckout = async () => {
+    if (isLoading) return;
 
-    const text = `*Pedido da Lista de Presentes*\n\n${itemsList}\n\n*Total: ${formatCurrency(
-      total,
-    )}*`;
+    setIsLoading(true);
 
-    const phoneNumber = "5522997000228";
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-      text,
-    )}`;
+    try {
+      const { data } = await createPreference({
+        items: items.map((item) => ({
+          id: item.id,
+          title: item.descricao || "Produto",
+          quantity: item.quantity,
+          unit_price: item.preco,
+        })),
+      });
 
-    window.open(whatsappUrl, "_blank");
+      // Redirecionar para checkout Mercado Pago
+      window.location.href = data.init_point;
+    } catch (error) {
+      console.error("Erro ao criar preferência:", error);
+      toastError("Erro ao criar preferência de pagamento. Tente novamente.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -186,10 +193,13 @@ export function CartDrawer() {
 
               <button
                 onClick={handleCheckout}
-                className="w-full bg-green-500 text-white py-3 px-4 sm:py-3 rounded-xl font-body font-bold text-sm sm:text-base hover:bg-green-600 transition-colors flex items-center justify-center gap-2 mb-2 cursor-pointer"
+                disabled={isLoading}
+                className="w-full bg-green-500 text-white py-3 px-4 sm:py-3 rounded-xl font-body font-bold text-sm sm:text-base hover:bg-green-600 transition-colors flex items-center justify-center gap-2 mb-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <IconeWhatsApp />
-                <span className="truncate">Finalizar via WhatsApp</span>
+                <span className="truncate">
+                  {isLoading ? "Criando pagamento..." : "Finalizar via Mercado Pago"}
+                </span>
               </button>
 
               <button

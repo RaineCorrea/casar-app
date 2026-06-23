@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { env } from "../../../../schemas/env";
+import { env } from "@/schemas/env";
 
 interface PreferenceItem {
   id: string;
