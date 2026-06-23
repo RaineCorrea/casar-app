@@ -1,10 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 
-// =====================================================
-// TIPOS
-// =====================================================
-
 export interface OrderItem {
   id: string;
   title: string;
@@ -38,14 +34,6 @@ export interface Order {
   updated_at: string;
 }
 
-// =====================================================
-// SERVER FUNCTIONS - OPERAÇÕES ADMIN
-// =====================================================
-
-/**
- * Criar um novo pedido
- * Usa service_role_key para bypass de RLS e permitir inserção com user_id null
- */
 export const createOrder = createServerFn({ method: "POST" })
   .inputValidator((data: CreateOrderData) => data)
   .handler(async ({ data }) => {
@@ -73,17 +61,12 @@ export const createOrder = createServerFn({ method: "POST" })
       .single();
 
     if (error) {
-      console.error("Erro ao criar pedido:", error);
       throw new Error(`Failed to create order: ${error.message}`);
     }
 
     return order;
   });
 
-/**
- * Atualizar status do pedido (usado pelo webhook do Mercado Pago)
- * Usa service_role_key para bypass de RLS
- */
 export const updateOrderStatus = createServerFn({ method: "POST" })
   .inputValidator(
     (data: {
@@ -104,7 +87,6 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
 
     const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // Buscar pedido por preference_id se não tiver order_id
     let query = supabase.from("Orders").select();
 
     if (data.orderId) {
@@ -122,11 +104,9 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
     const { data: order, error: fetchError } = await query.single();
 
     if (fetchError || !order) {
-      console.error("Erro ao buscar pedido:", fetchError);
       throw new Error(`Order not found: ${fetchError?.message}`);
     }
 
-    // Atualizar pedido
     const updateData: Partial<Order> = {
       status: data.status,
       mp_status: data.mpStatus,
@@ -144,18 +124,12 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
       .single();
 
     if (updateError) {
-      console.error("Erro ao atualizar pedido:", updateError);
       throw new Error(`Failed to update order: ${updateError.message}`);
     }
 
     return updatedOrder;
   });
 
-/**
- * Buscar pedido por ID
- * Pode ser chamado por usuário autenticado (verifica se é o dono)
- * ou por admin (service_role)
- */
 export const getOrderById = createServerFn({ method: "GET" })
   .inputValidator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
@@ -175,16 +149,12 @@ export const getOrderById = createServerFn({ method: "GET" })
       .single();
 
     if (error) {
-      console.error("Erro ao buscar pedido:", error);
       throw new Error(`Failed to fetch order: ${error.message}`);
     }
 
     return order;
   });
 
-/**
- * Buscar pedido por preference_id do Mercado Pago
- */
 export const getOrderByPreferenceId = createServerFn({ method: "GET" })
   .inputValidator((preferenceId: string) => preferenceId)
   .handler(async ({ data: preferenceId }) => {
@@ -204,17 +174,12 @@ export const getOrderByPreferenceId = createServerFn({ method: "GET" })
       .single();
 
     if (error) {
-      console.error("Erro ao buscar pedido:", error);
       throw new Error(`Failed to fetch order: ${error.message}`);
     }
 
     return order;
   });
 
-/**
- * Listar todos os pedidos (admin only)
- * Usa service_role_key para bypass de RLS
- */
 export const listAllOrders = createServerFn({ method: "GET" })
   .handler(async () => {
     const supabaseUrl = process.env.VITE_SUPABASE_URL;
@@ -232,21 +197,12 @@ export const listAllOrders = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Erro ao listar pedidos:", error);
       throw new Error(`Failed to list orders: ${error.message}`);
     }
 
     return orders;
   });
 
-// =====================================================
-// CLIENT FUNCTIONS - OPERAÇÕES DO USUÁRIO
-// =====================================================
-
-/**
- * Hook para criar pedido a partir do carrinho
- * Deve ser chamado após redirecionamento do Mercado Pago
- */
 export interface CreateOrderFromCartParams {
   items: OrderItem[];
   total: number;
@@ -258,41 +214,28 @@ export interface CreateOrderFromCartParams {
   };
 }
 
-/**
- * Salvar pedido após checkout Mercado Pago
- * Esta função deve ser chamada nas páginas de retorno (success/failure/pending)
- */
 export const saveOrderAfterCheckout = async (
   params: CreateOrderFromCartParams
 ): Promise<Order> => {
-  try {
-    const order = await createOrder({
-      items: params.items,
-      total: params.total,
-      mp_preference_id: params.mpPreferenceId,
-      customer_name: params.customerInfo?.name,
-      customer_email: params.customerInfo?.email,
-      customer_phone: params.customerInfo?.phone,
-    });
+  const order = await createOrder({
+    items: params.items,
+    total: params.total,
+    mp_preference_id: params.mpPreferenceId,
+    customer_name: params.customerInfo?.name,
+    customer_email: params.customerInfo?.email,
+    customer_phone: params.customerInfo?.phone,
+  });
 
-    return order;
-  } catch (error) {
-    console.error("Erro ao salvar pedido:", error);
-    throw error;
-  }
+  return order;
 };
 
-/**
- * Buscar status do pedido pelo preference_id
- */
 export const checkOrderStatus = async (
   preferenceId: string
 ): Promise<Order | null> => {
   try {
     const order = await getOrderByPreferenceId(preferenceId);
     return order;
-  } catch (error) {
-    console.error("Erro ao buscar status do pedido:", error);
+  } catch {
     return null;
   }
 };
