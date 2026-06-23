@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 
-export function totastSuccess(message: string) {
+export function toastSuccess(message: string) {
   return toast.success(message);
 }
 
