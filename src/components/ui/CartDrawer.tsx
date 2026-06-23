@@ -57,7 +57,6 @@ export function CartDrawer() {
         },
       });
 
-      // Salvar pedido no Supabase ANTES de redirecionar
       try {
         await saveOrderAfterCheckout({
           items: items.map((item) => ({
@@ -70,16 +69,11 @@ export function CartDrawer() {
           total: total,
           mpPreferenceId: response.preference_id,
         });
-        console.log("Pedido salvo no Supabase com sucesso");
-      } catch (saveError) {
-        console.error("Erro ao salvar pedido (continuando para checkout):", saveError);
-        // Não bloqueia o checkout se falhar ao salvar no Supabase
+      } catch {
       }
 
-      // Redirecionar para checkout Mercado Pago
       window.location.href = response.init_point;
     } catch (error) {
-      console.error("Erro ao criar preferência:", error);
       toastError("Erro ao criar preferência de pagamento. Tente novamente.");
     } finally {
       setIsLoading(false);
@@ -221,9 +215,8 @@ export function CartDrawer() {
               <button
                 onClick={handleCheckout}
                 disabled={isLoading}
-                className="w-full bg-green-500 text-white py-3 px-4 sm:py-3 rounded-xl font-body font-bold text-sm sm:text-base hover:bg-green-600 transition-colors flex items-center justify-center gap-2 mb-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-forest text-white py-3 px-4 sm:py-3 rounded-xl font-body font-bold text-sm sm:text-base hover:bg-forest-dark transition-colors flex items-center justify-center gap-2 mb-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <IconeWhatsApp />
                 <span className="truncate">
                   {isLoading ? "Criando pagamento..." : "Finalizar via Mercado Pago"}
                 </span>

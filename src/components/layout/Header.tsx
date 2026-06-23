@@ -110,7 +110,7 @@ export default function Header() {
             }`}
           />
           {itemCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-pink-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+            <span className="absolute -top-1 -right-1 bg-terracotta text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
               {itemCount}
             </span>
           )}
