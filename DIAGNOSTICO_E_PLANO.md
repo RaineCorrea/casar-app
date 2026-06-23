@@ -1084,7 +1084,7 @@ ADMIN_PASSWORD=admin123456
 
 ### **FASE 3: Melhorias Supabase** (PRIORIDADE MÉDIA)
 
-**Progresso da Fase**: ████████░░ 80% Completo
+**Progresso da Fase**: ██████████ 100% Completo ✅
 
 - [x] **3.1** Tabela de Pedidos ✅
   - [x] Criar `supabase/migrations/002_create_orders_table.sql`
@@ -1094,7 +1094,9 @@ ADMIN_PASSWORD=admin123456
   - [x] Criar políticas de segurança
   - [x] Habilitar Realtime
   - [x] Commit `feat(supabase): criar tabela de pedidos`
-  - [ ] Executar migration no Supabase (via Dashboard)
+  - [x] Executar migration no Supabase (via Dashboard) ✅
+  - [x] Commit `fix(supabase): remover comando psql da migration`
+  - [x] Verificar funcionamento da tabela ✅
 
 - [x] **3.2** Serviços de Pedidos ✅
   - [x] Criar `src/services/supabase/orders.ts`
@@ -1217,29 +1219,52 @@ ADMIN_PASSWORD=admin123456
 
 **📊 Status Atual**:
 
-- Progresso Geral: ~85%
+- Progresso Geral: ~90%
 - FASE 1: ✅ CONCLUÍDA (100%)
 - FASE 2: ✅ CONCLUÍDA (100%)
-- FASE 3: 🔄 EM ANDAMENTO (80%)
+- FASE 3: ✅ CONCLUÍDA (100%)
 - FASE 4: ⏳ PENDENTE
 
 **🎯 Próximos Passos**:
 
-1. Executar migration da tabela Orders no Supabase (via Dashboard)
-2. Finalizar FASE 3 com Storage para Imagens (opcional) OU passar para FASE 4
+1. Iniciar FASE 4: Refinamentos e Otimizações
+2. OU implementar opcionais da FASE 3 (Auth, Storage, Realtime)
 
 ---
 
-### **2026-06-23 - FASE 3 INICIADA**
+### **2026-06-23 - FASE 3 CONCLUÍDA (100%)** ✅
 
-**✅ FASE 3 - PROGRESSO (80%)**:
+**✅ FASE 3 - COMPLETA**:
 
 - Branch: `feature/fase3-supabase-improvements`
-- Migration `002_create_orders_table.sql` criada:
+- Migration `002_create_orders_table.sql` criada e executada:
   - Tabela Orders com campos para itens, total, status
   - Campos para integração Mercado Pago (preference_id, payment_id, status)
   - RLS configurado com políticas de segurança
   - Índices criados para performance
+  - Realtime habilitado
+  - Trigger para updated_at automático
+  - Check constraint para status válido
+  - ✅ Migration executada no Supabase com sucesso
+  - ✅ Verificação completa: inserção, busca, deleção funcionando
+- Serviços de pedidos implementados (`src/services/supabase/orders.ts`):
+  - createOrder: criar novo pedido
+  - updateOrderStatus: atualizar status (usado por webhook)
+  - getOrderById: buscar pedido por ID
+  - getOrderByPreferenceId: buscar por preference_id
+  - listAllOrders: listar todos pedidos (admin)
+  - saveOrderAfterCheckout: salvar após checkout
+  - checkOrderStatus: verificar status do pedido
+- Integração com checkout:
+  - CartDrawer modificado para salvar pedido antes de redirecionar
+  - Páginas de retorno modificadas para mostrar detalhes do pedido
+  - Busca de status do pedido pelo preference_id
+- Correções:
+  - Corrigido typo: `totastSuccess` → `toastSuccess`
+  - Removido comando psql `\d+` da migration para compatibilidade
+- 5 commits realizados
+- Push para GitHub realizado
+- Verificação funcional completa (insert, select, delete)
   - Realtime habilitado
   - Trigger para updated_at automático
   - Check constraint para status válido
