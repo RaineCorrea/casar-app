@@ -16,16 +16,10 @@ interface CreatePreferenceData {
   };
 }
 
-interface CreatePreferenceResponse {
-  init_point: string;
-  preference_id: string;
-}
-
 export const createPreference = createServerFn({ method: "POST" })
   .inputValidator((data: CreatePreferenceData) => data)
   .handler(async ({ data }) => {
-    const inputData = data.data || data;
-    const { items, backUrls } = inputData;
+    const { items, backUrls } = data;
 
     const accessToken = process.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
 
@@ -35,7 +29,7 @@ export const createPreference = createServerFn({ method: "POST" })
 
     const requestBody = {
       items,
-      back_urls,
+      backUrls,
       payment_methods: {},
     };
 
