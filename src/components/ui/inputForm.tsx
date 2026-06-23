@@ -3,6 +3,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { guestSchema, type GuestFormData } from "../../schemas/guestSchema";
 import { toastError, totastSuccess } from "../../utils/toast";
 import { Element } from "react-scroll";
+import { Input } from "./input";
+import { Label } from "./label";
+import { Button } from "./button";
 import {
   DecoracaoOndaSuperior,
   DecoracaoFolha,
@@ -99,14 +102,14 @@ export default function InputForm() {
         <div className="bg-cream/95 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-lifted">
           <form onSubmit={handleSubmit(handleForm)} className="space-y-6">
             <div className="group">
-              <label
+              <Label
                 htmlFor="name"
                 className="block font-body text-forest text-sm uppercase tracking-wider mb-2"
               >
                 Nome Completo
-              </label>
+              </Label>
               <div className="relative">
-                <input
+                <Input
                   id="name"
                   type="text"
                   autoComplete="name"
@@ -133,14 +136,14 @@ export default function InputForm() {
             </div>
 
             <div className="group">
-              <label
+              <Label
                 htmlFor="telefone"
                 className="block font-body text-forest text-sm uppercase tracking-wider mb-2"
               >
                 Telefone
-              </label>
+              </Label>
               <div className="relative">
-                <input
+                <Input
                   id="telefone"
                   type="tel"
                   inputMode="tel"
@@ -170,14 +173,14 @@ export default function InputForm() {
             </div>
 
             <div className="group">
-              <label
+              <Label
                 htmlFor="email"
                 className="block font-body text-forest text-sm uppercase tracking-wider mb-2"
               >
                 E-mail
-              </label>
+              </Label>
               <div className="relative">
-                <input
+                <Input
                   id="email"
                   type="email"
                   autoComplete="email"
@@ -203,10 +206,10 @@ export default function InputForm() {
               )}
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={addGuest.isPending}
-              className="group cursor-pointer relative w-full mt-8 py-3 sm:py-4 px-6 sm:px-8 bg-forest text-cream font-display text-base sm:text-lg tracking-wide rounded-xl overflow-hidden transition-all duration-300 hover:bg-forest-dark hover:shadow-lifted disabled:opacity-70 disabled:cursor-not-allowed"
+              className="group cursor-pointer relative w-full mt-8 py-3 sm:py-4 px-6 sm:px-8 bg-forest text-cream font-display text-base sm:text-lg tracking-wide rounded-xl overflow-hidden transition-all duration-300 hover:bg-forest-dark hover:shadow-lifted disabled:opacity-70 disabled:cursor-not-allowed h-auto"
             >
               <span
                 className="absolute inset-0 transform translate-x-full group-hover:translate-x-0 transition-transform duration-500"
@@ -228,7 +231,7 @@ export default function InputForm() {
                   </>
                 )}
               </span>
-            </button>
+            </Button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-forest/20 text-center">
