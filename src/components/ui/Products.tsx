@@ -5,6 +5,13 @@ import {
 } from "../../services/supabase/products";
 import { useCart } from "../contexts/CartContext";
 import { IconeCarrinho } from "../icons";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
 
 type SortOption = {
   value: ProductsSortBy;
@@ -123,18 +130,24 @@ export default function Products() {
         </div>
 
         <div className="mb-8 flex justify-end">
-          <select
+          <Select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as ProductsSortBy)}
-            className="px-4 py-2 rounded-xl border-2 border-forest/20 bg-cream text-forest font-body focus:outline-none focus:ring-2 focus:ring-forest/50"
+            onValueChange={(value) => setSortBy(value as ProductsSortBy)}
             aria-label="Ordenar produtos"
           >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              className="px-4 py-2 rounded-xl border-2 border-forest/20 bg-cream text-forest font-body focus:outline-none focus:ring-2 focus:ring-forest/50 w-fit"
+            >
+              <SelectValue placeholder="Ordenar por" />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {isLoading ? (
