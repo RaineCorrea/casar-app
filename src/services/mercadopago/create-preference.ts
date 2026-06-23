@@ -8,7 +8,6 @@ interface PreferenceItem {
 }
 
 interface CreatePreferenceData {
-  accessToken: string;
   items: PreferenceItem[];
   backUrls: {
     success: string;
@@ -25,14 +24,48 @@ interface CreatePreferenceResponse {
 export const createPreference = createServerFn({ method: "POST" })
   .inputValidator((data: CreatePreferenceData) => data)
   .handler(async ({ data }) => {
-    const { accessToken, items, backUrls } = data;
+    console.log("DEBUG - Dados recebidos (raw):", JSON.stringify(data, null, 2));
+
+    // O TanStack Start pode embrulhar os dados em um objeto adicional
+    const inputData = data.data || data;
+    console.log("DEBUG - Dados após desembrulhar:", JSON.stringify(inputData, null, 2));
+
+    const { items, backUrls } = inputData;
+
+    // Acessar variável de ambiente no servidor
+    const accessToken = process.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
 
     if (!accessToken) {
-      console.error("Mercado Pago ACCESS_TOKEN não fornecido");
+      console.error("Mercado Pago ACCESS_TOKEN não configurado nas variáveis de ambiente");
       throw new Error("Mercado Pago credentials not configured");
     }
 
     console.log("Criando preferência com itens:", items);
+    console.log("Back URLs:", backUrls);
+
+    const requestBody = {
+      items: items,
+      back_urls: backUrls,
+      // Opcional: Configurar métodos de pagamento
+      // PIX já vem habilitado por padrão no Checkout Pro!
+      payment_methods: {
+        // Exemplo: Excluir apenas boleto (mantém PIX e cartões)
+        // excluded_payment_types: [
+        //   { id: "ticket" }  // ticket = boleto
+        // ],
+
+        // Exemplo: Excluir cartão específico
+        // excluded_payment_methods: [
+        //   { id: "master" },  // Mastercard
+        //   { id: "visa" }    // Visa
+        // ],
+
+        // Exemplo: Limitar parcelamento
+        // installments: 12  // Máximo de 12x
+      },
+    };
+
+    console.log("RequestBody completo:", JSON.stringify(requestBody, null, 2));
 
     const response = await fetch(
       "https://api.mercadopago.com/checkout/preferences",
@@ -42,12 +75,7 @@ export const createPreference = createServerFn({ method: "POST" })
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({
-          items: items,
-          back_urls: backUrls,
-          auto_return: "approved",
-          binary_mode: true,
-        }),
+        body: JSON.stringify(requestBody),
       },
     );
 
