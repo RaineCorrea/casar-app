@@ -4,13 +4,17 @@ import { useSearch } from "@tanstack/react-router";
 import { checkOrderStatus } from "../services/supabase/orders";
 import { useState, useEffect } from "react";
 
+interface SearchParams {
+  preference_id?: string;
+}
+
 export const Route = createFileRoute("/checkout/pending")({
   component: CheckoutPending,
 });
 
 function CheckoutPending() {
-  const search = useSearch({ from: "/checkout/pending" });
-  const preferenceId = search.preference_id as string | undefined;
+  const search = useSearch({ from: "/checkout/pending" }) as SearchParams;
+  const preferenceId = search.preference_id;
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +41,9 @@ function CheckoutPending() {
     <div className="min-h-screen flex items-center justify-center bg-cream px-6">
       <div className="text-center max-w-md">
         <div className="mb-8 flex items-center justify-center">
-          <IconeCarregando className="w-20 h-20 text-terracotta" />
+          <div className="w-20 h-20 text-terracotta">
+            <IconeCarregando />
+          </div>
         </div>
 
         <h1 className="font-display text-forest text-4xl md:text-5xl mb-4 font-medium">

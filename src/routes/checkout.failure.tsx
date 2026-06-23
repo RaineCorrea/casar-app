@@ -4,13 +4,17 @@ import { useSearch } from "@tanstack/react-router";
 import { checkOrderStatus } from "../services/supabase/orders";
 import { useState, useEffect } from "react";
 
+interface SearchParams {
+  preference_id?: string;
+}
+
 export const Route = createFileRoute("/checkout/failure")({
   component: CheckoutFailure,
 });
 
 function CheckoutFailure() {
-  const search = useSearch({ from: "/checkout/failure" });
-  const preferenceId = search.preference_id as string | undefined;
+  const search = useSearch({ from: "/checkout/failure" }) as SearchParams;
+  const preferenceId = search.preference_id;
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -37,7 +41,9 @@ function CheckoutFailure() {
     <div className="min-h-screen flex items-center justify-center bg-cream px-6">
       <div className="text-center max-w-md">
         <div className="mb-8 flex items-center justify-center">
-          <IconeErro className="w-20 h-20 text-red-500" />
+          <div className="w-20 h-20 text-red-500">
+            <IconeErro />
+          </div>
         </div>
 
         <h1 className="font-display text-forest text-4xl md:text-5xl mb-4 font-medium">
@@ -45,7 +51,8 @@ function CheckoutFailure() {
         </h1>
 
         <p className="font-body text-forest-dark text-lg mb-8 leading-relaxed">
-          Houve um problema com o pagamento. Por favor, tente novamente ou entre em contato conosco.
+          Houve um problema com o pagamento. Por favor, tente novamente ou entre
+          em contato conosco.
         </p>
 
         {!loading && order && (
@@ -55,7 +62,8 @@ function CheckoutFailure() {
             </h2>
             <div className="space-y-2 text-left">
               <p className="text-forest-dark">
-                <span className="font-semibold">Pedido ID:</span> {order.id.slice(0, 8)}...
+                <span className="font-semibold">Pedido ID:</span>{" "}
+                {order.id.slice(0, 8)}...
               </p>
               <p className="text-forest-dark">
                 <span className="font-semibold">Status:</span>{" "}

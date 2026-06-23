@@ -4,14 +4,19 @@ import { useSearch } from "@tanstack/react-router";
 import { checkOrderStatus } from "../services/supabase/orders";
 import { useState, useEffect } from "react";
 
+interface SearchParams {
+  preference_id?: string;
+  payment_id?: string;
+}
+
 export const Route = createFileRoute("/checkout/success")({
   component: CheckoutSuccess,
 });
 
 function CheckoutSuccess() {
-  const search = useSearch({ from: "/checkout/success" });
-  const preferenceId = search.preference_id as string | undefined;
-  const paymentId = search.payment_id as string | undefined;
+  const search = useSearch({ from: "/checkout/success" }) as SearchParams;
+  const preferenceId = search.preference_id;
+  const paymentId = search.payment_id;
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -45,7 +50,9 @@ function CheckoutSuccess() {
     <div className="min-h-screen flex items-center justify-center bg-cream px-6">
       <div className="text-center max-w-md">
         <div className="mb-8 flex items-center justify-center">
-          <IconeCheck className="w-20 h-20 text-green-500" />
+          <div className="w-20 h-20 text-green-500">
+            <IconeCheck />
+          </div>
         </div>
 
         <h1 className="font-display text-forest text-4xl md:text-5xl mb-4 font-medium">
