@@ -5,6 +5,7 @@ import {
 } from "../services/supabase/guests";
 import { validateAdminToken } from "../services/auth/admin";
 import { useEffect } from "react";
+import { IconeEmail, IconeTelefone } from "../components/icons";
 
 export const Route = createFileRoute("/lista2026")({
   loader: async ({ context }) => {
@@ -111,18 +112,14 @@ function Lista2026() {
                         <div className="space-y-2 font-body text-sm text-forest-dark/80">
                           {guest.email && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg" aria-hidden="true">
-                                ✉
-                              </span>
+                              <IconeEmail className="w-4 h-4" aria-hidden="true" />
                               <span className="sr-only">E-mail:</span>
                               <span>{guest.email}</span>
                             </div>
                           )}
                           {guest.telefone && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg" aria-hidden="true">
-                                📱
-                              </span>
+                              <IconeTelefone className="w-4 h-4" aria-hidden="true" />
                               <span className="sr-only">Telefone:</span>
                               <span>{guest.telefone}</span>
                             </div>
