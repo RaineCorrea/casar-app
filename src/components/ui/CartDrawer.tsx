@@ -67,7 +67,9 @@ export function CartDrawer() {
           total: total,
           mpPreferenceId: response.preference_id,
         });
-      } catch {
+      } catch (saveError) {
+        console.error("Erro ao salvar pedido:", saveError);
+        // Continuar para o checkout mesmo se falhar ao salvar
       }
 
       window.location.href = response.init_point;

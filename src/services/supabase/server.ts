@@ -59,7 +59,7 @@ export const fetchProducts = createServerFn({ method: "GET" })
     const [column, order] = sortBy.split("_");
     const orderValue = order === "asc";
 
-    let query = supabase
+    const query = supabase
       .from("Products")
       .select("*", { count: "exact" })
       .range(from, to)

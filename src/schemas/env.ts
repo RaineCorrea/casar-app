@@ -12,9 +12,10 @@ const envSchema = z.object({
     .string()
     .min(1, { message: 'SUPABASE_SERVICE_ROLE_KEY é obrigatório para operações admin' })
     .optional(),
-  VITE_MERCADO_PAGO_ACCESS_TOKEN: z
+  MERCADO_PAGO_ACCESS_TOKEN: z
     .string()
-    .min(1, { message: 'VITE_MERCADO_PAGO_ACCESS_TOKEN é obrigatório para Mercado Pago' }),
+    .min(1, { message: 'MERCADO_PAGO_ACCESS_TOKEN é obrigatório para Mercado Pago (server-only)' })
+    .optional(),
   VITE_MERCADO_PAGO_PUBLIC_KEY: z
     .string()
     .min(1, { message: 'VITE_MERCADO_PAGO_PUBLIC_KEY é obrigatório para checkout' })
@@ -37,7 +38,7 @@ export function validateEnv(): Env {
       VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
       VITE_SUPABASE_KEY: import.meta.env.VITE_SUPABASE_KEY,
       SUPABASE_SERVICE_ROLE_KEY: import.meta.env.SUPABASE_SERVICE_ROLE_KEY,
-      VITE_MERCADO_PAGO_ACCESS_TOKEN: import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN,
+      MERCADO_PAGO_ACCESS_TOKEN: import.meta.env.MERCADO_PAGO_ACCESS_TOKEN,
       VITE_MERCADO_PAGO_PUBLIC_KEY: import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY,
       ADMIN_USERNAME: import.meta.env.ADMIN_USERNAME,
       ADMIN_PASSWORD: import.meta.env.ADMIN_PASSWORD,
