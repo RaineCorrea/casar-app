@@ -164,9 +164,6 @@ const { data: orders } = await supabaseAdmin
 -- VERIFICAÇÃO
 -- =====================================================
 
--- Verificar estrutura da tabela
-\d+ "Orders";
-
 -- Verificar políticas criadas
 SELECT
   schemaname,
