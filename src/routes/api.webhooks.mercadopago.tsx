@@ -13,12 +13,19 @@ function WebhookEndpoint() {
 
 // Handle POST requests for webhooks
 export async function POST({ request }: { request: Request }) {
+  console.log("=== WEBHOOK RECEBIDO ===");
+
   try {
     const body = await request.json();
+
+    console.log("Webhook body:", JSON.stringify(body, null, 2));
 
     // Validar assinatura do webhook
     const signature = request.headers.get("x-signature");
     const webhookSecret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
+
+    console.log("Signature header:", signature);
+    console.log("Webhook secret configured:", !!webhookSecret);
 
     if (!webhookSecret) {
       console.error("MERCADO_PAGO_WEBHOOK_SECRET not configured");
@@ -37,11 +44,14 @@ export async function POST({ request }: { request: Request }) {
     }
 
     // Validar assinatura (agora é async)
+    console.log("Validando assinatura...");
     const isValid = await validateWebhookSignature({
       signature,
       body,
       webhookSecret,
     });
+
+    console.log("Assinatura válida:", isValid);
 
     if (!isValid) {
       console.error("Invalid webhook signature");
@@ -59,9 +69,12 @@ export async function POST({ request }: { request: Request }) {
       );
     }
 
+    console.log("Processando webhook...");
     const result = await receiveWebhook({
       data: body,
     });
+
+    console.log("Webhook processado:", result);
 
     return new Response(JSON.stringify(result), {
       status: 200,
