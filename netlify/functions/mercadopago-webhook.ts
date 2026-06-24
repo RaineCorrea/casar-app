@@ -397,9 +397,14 @@ const handler: Handler = async (event, context) => {
     // }
 
     // Processar webhook
-    const { type, data_id, topic } = body;
+    const { type, data_id, topic, data } = body;
 
-    if (!type || !data_id) {
+    // O Mercado Pago envia o ID em data.id, não em data_id diretamente
+    const paymentId = data_id || data?.id;
+
+    console.log("Webhook parameters:", { type, topic, data_id, paymentId });
+
+    if (!type || !paymentId) {
       console.error("Missing webhook parameters");
       return {
         statusCode: 400,
@@ -414,8 +419,8 @@ const handler: Handler = async (event, context) => {
     }
 
     if (type === "payment" || topic === "payment") {
-      console.log("Processando notificação de pagamento:", data_id);
-      const result = await processPaymentNotification(data_id);
+      console.log("Processando notificação de pagamento:", paymentId);
+      const result = await processPaymentNotification(paymentId);
       console.log("Resultado:", result);
 
       return {
