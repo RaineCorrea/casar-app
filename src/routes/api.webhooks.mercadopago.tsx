@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { receiveWebhook } from "../services/mercadopago/webhook-handler";
+import { validateWebhookSignature } from "../services/mercadopago/validate-signature";
 
 export const Route = createFileRoute("/api/webhooks/mercadopago")({
   component: WebhookEndpoint,
@@ -14,6 +15,49 @@ function WebhookEndpoint() {
 export async function POST({ request }: { request: Request }) {
   try {
     const body = await request.json();
+
+    // Validar assinatura do webhook
+    const signature = request.headers.get("x-signature");
+    const webhookSecret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
+
+    if (!webhookSecret) {
+      console.error("MERCADO_PAGO_WEBHOOK_SECRET not configured");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Webhook secret not configured",
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
+    // Validar assinatura
+    const isValid = validateWebhookSignature({
+      signature,
+      body,
+      webhookSecret,
+    });
+
+    if (!isValid) {
+      console.error("Invalid webhook signature");
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Invalid signature",
+        }),
+        {
+          status: 401,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
 
     const result = await receiveWebhook({
       data: body,

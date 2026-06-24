@@ -10,7 +10,6 @@ import {
   SheetContent,
 } from "./sheet";
 import { createPreference } from "../../services/mercadopago/create-preference";
-import { saveOrderAfterCheckout } from "../../services/supabase/orders";
 import { toastError } from "../../utils/toast";
 
 export function CartDrawer() {
@@ -61,23 +60,8 @@ export function CartDrawer() {
         },
       });
 
-      try {
-        await saveOrderAfterCheckout({
-          items: items.map((item) => ({
-            id: item.id,
-            title: item.descricao || "Produto",
-            quantity: item.quantity,
-            unit_price: Number(item.preco),
-            image: item.image,
-          })),
-          total: total,
-          mpPreferenceId: response.preferenceId,
-        });
-      } catch (saveError) {
-        console.error("Erro ao salvar pedido:", saveError);
-        // Continuar para o checkout mesmo se falhar ao salvar
-      }
-
+      // Redirecionar para o Mercado Pago
+      // O pedido será criado automaticamente quando o Mercado Pago enviar o webhook
       window.location.href = response.initPoint;
     } catch (error) {
       console.error("Checkout error:", error);
