@@ -336,6 +336,7 @@ MP Webhook → Netlify Function → Validação HMAC → Log de Pagamento → Re
 | `tsconfig.app.json` | Adicionado `ignoreDeprecations: "6.0"` |
 | `components.json` | Removido `$schema` não confiável |
 | `src/components/layout/Header.tsx` | Restaurado `mounted` para evitar hydration mismatch (trade-off: 1 warning aceito) |
+| `src/services/auth/admin.ts` | Corrigido: `process.env` ao invés de `import.meta.env` para server vars |
 | `src/env.d.ts` | Removido `ImportMeta` duplicado |
 | `src/components/layout/Header.tsx` | Removido `mounted` state |
 | `src/components/ui/Products.tsx` | Removido `ProductCardSkeleton` não usado |
