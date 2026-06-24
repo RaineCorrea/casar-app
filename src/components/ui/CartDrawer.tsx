@@ -11,6 +11,7 @@ import {
 } from "./sheet";
 import { createPreference } from "../../services/mercadopago/create-preference";
 import { toastError } from "../../utils/toast";
+import { formatCurrency } from "../../lib/utils";
 
 export function CartDrawer() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,13 +24,6 @@ export function CartDrawer() {
     removeItem,
     clearCart,
   } = useCart();
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(value);
-  };
 
   const handleCheckout = async () => {
     if (isLoading) return;

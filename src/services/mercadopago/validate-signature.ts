@@ -1,6 +1,15 @@
+export interface WebhookBody {
+  type?: string;
+  data_id?: string;
+  topic?: string;
+  data?: {
+    id?: string;
+  };
+}
+
 export interface ValidateSignatureParams {
   signature: string | null;
-  body: any;
+  body: WebhookBody;
   webhookSecret: string;
 }
 

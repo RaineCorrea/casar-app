@@ -5,7 +5,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://casar-app.example.com/sitemap.xml
+Sitemap: https://matheus-nicolly.love/sitemap.xml
 
 # Bloquear áreas administrativas (se houver)
 Disallow: /admin

@@ -15,6 +15,12 @@ interface LoginError {
   error: string;
 }
 
+interface AdminToken {
+  admin: boolean;
+  timestamp: number;
+  expiresAt: number;
+}
+
 // Rate limiting em memória para login
 const loginAttempts = new Map<string, { count: number; resetTime: number }>();
 const MAX_ATTEMPTS = 5;
@@ -134,7 +140,7 @@ export const adminLogin = createServerFn({ method: "POST" })
 
 export function validateAdminToken(token: string): boolean {
   try {
-    let decoded: any;
+    let decoded: AdminToken;
 
     if (typeof window !== "undefined") {
       const decodedString = atob(token);

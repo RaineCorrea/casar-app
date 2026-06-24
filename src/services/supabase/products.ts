@@ -25,9 +25,7 @@ export function useProductsInfinite(sortBy: ProductsSortBy = "descricao_asc") {
         limit: 10,
         sortBy,
       };
-      return fetchProducts({
-        data: params,
-      } as any);
+      return fetchProducts({ data: params });
     },
     getNextPageParam: (lastPage) => {
       return lastPage.hasMore ? lastPage.page + 1 : undefined;

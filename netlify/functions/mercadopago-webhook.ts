@@ -36,6 +36,14 @@ interface PaymentInfo {
   };
 }
 
+interface ProcessPaymentResult {
+  success: boolean;
+  paymentId?: string;
+  status?: string;
+  message?: string;
+  error?: string;
+}
+
 // Validar assinatura do webhook
 function validateWebhookSignature(
   signature: string | null,
@@ -88,7 +96,7 @@ function validateWebhookSignature(
 }
 
 // Processar e logar informações do pagamento
-async function processPaymentNotification(paymentId: string): Promise<any> {
+async function processPaymentNotification(paymentId: string): Promise<ProcessPaymentResult> {
   try {
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
 
@@ -154,7 +162,7 @@ async function processPaymentNotification(paymentId: string): Promise<any> {
   }
 }
 
-const handler: Handler = async (event, context) => {
+const handler: Handler = async (event) => {
   console.log("=== WEBHOOK RECEBIDO ===");
 
   // Apenas responder a POST
@@ -194,26 +202,24 @@ const handler: Handler = async (event, context) => {
       };
     }
 
-    // Validar assinatura (desabilitado temporariamente para debug)
+    // Validar assinatura do webhook
     console.log("Validando assinatura...");
     const isValid = validateWebhookSignature(signature, body, webhookSecret);
 
     console.log("Assinatura válida:", isValid);
 
-    // TEMPORÁRIO: Desabilitar validação para debug
-    // Remover este comentário quando a secret key estiver correta
     if (!isValid) {
-      console.warn("⚠️ Assinatura inválida, mas continuando para debug (TEMPORÁRIO)");
-      // return {
-      //   statusCode: 401,
-      //   body: JSON.stringify({
-      //     success: false,
-      //     error: "Invalid signature",
-      //   }),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // };
+      console.warn("Assinatura inválida - rejeitando webhook");
+      return {
+        statusCode: 401,
+        body: JSON.stringify({
+          success: false,
+          error: "Invalid signature",
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
     }
 
     // Processar webhook

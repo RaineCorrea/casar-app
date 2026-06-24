@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "./select";
 import { Button } from "./button";
-import { ProductCardSkeleton, ProductsListSkeleton } from "./Skeleton";
+import { ProductsListSkeleton } from "./Skeleton";
 import { ProductCard } from "./ProductCard";
 
 type SortOption = {
