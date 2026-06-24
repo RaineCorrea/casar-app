@@ -38,7 +38,7 @@ export const createOrder = createServerFn({ method: "POST" })
   .inputValidator((data: CreateOrderData) => data)
   .handler(async ({ data }) => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const serviceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       throw new Error("Supabase credentials not configured");
@@ -79,7 +79,7 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
   )
   .handler(async ({ data }) => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const serviceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       throw new Error("Supabase credentials not configured");
@@ -183,7 +183,7 @@ export const getOrderByPreferenceId = createServerFn({ method: "GET" })
 export const listAllOrders = createServerFn({ method: "GET" })
   .handler(async () => {
     const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const serviceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       throw new Error("Supabase credentials not configured");

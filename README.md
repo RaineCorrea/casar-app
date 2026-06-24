@@ -416,6 +416,36 @@ cp .env.example .env
 # Edite o .env com suas credenciais reais
 ```
 
+### Problema: "Credenciais do Mercado Pago não configuradas" (Produção)
+
+**Solução:**
+
+No **TanStack Start + Netlify**, variáveis server-side usam `process.env` e precisam ser configuradas no painel Netlify:
+
+1. **Acesse o painel Netlify**
+   - Vá em: Site settings > Environment variables
+
+2. **Configure as variáveis server-side:**
+   ```
+   MERCADO_PAGO_ACCESS_TOKEN=APP_USR-7301047654796642-062309-...
+   SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   ADMIN_USERNAME=admin
+   ADMIN_PASSWORD=senha_segura_123
+   ```
+
+3. **Configure as variáveis client-side (se não estiver no .env):**
+   ```
+   VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+   VITE_SUPABASE_KEY=sua-chave-anon
+   VITE_MERCADO_PAGO_PUBLIC_KEY=APP_USR-aedced26-256c-48bb-9a66-...
+   ```
+
+4. **Rebuild automático**
+   - O Netlify fará rebuild automático após salvar
+   - Aguarde o deploy completar
+
+**Nota**: Variáveis com `VITE_` são expostas no cliente. Sem `VITE_` são server-only.
+
 ### Problema: "RLS policy failed"
 
 **Solução:**
@@ -444,8 +474,8 @@ SELECT * FROM pg_policies WHERE tablename IN ('GuestList', 'Products', 'Orders')
 **Solução:**
 
 ```bash
-# 1. Verifique se MERCADO_PAGO_ACCESS_TOKEN está configurado
-echo $MERCADO_PAGO_ACCESS_TOKEN
+# 1. Verifique se MERCADO_PAGO_ACCESS_TOKEN está configurado no Netlify
+# Site settings > Environment variables
 
 # 2. No painel Mercado Pago, verifique o webhook status
 # Acesse: Integrações > Webhooks > Logs
