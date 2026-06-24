@@ -33,7 +33,8 @@
     "tailwindcss": "^4.1.18",
     "tailwindcss-animate": "^1.0.7",
     "vite-tsconfig-paths": "^6.0.5",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@netlify/functions": "^2.8.0"
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",
@@ -58,8 +59,5 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "8.62.0",
     "vite": "^7.2.4"
-  },
-  "dependencies": {
-    "@netlify/functions": "^2.8.0"
   }
 }
