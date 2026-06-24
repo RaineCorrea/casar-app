@@ -21,6 +21,27 @@ interface PaymentInfo {
       type: string;
       number: string;
     };
+    phone?: {
+      area_code?: string;
+      number?: string;
+    };
+    first_name?: string;
+    last_name?: string;
+  };
+  additional_info?: {
+    payer?: {
+      first_name?: string;
+      last_name?: string;
+      phone?: {
+        area_code?: string;
+        number?: string;
+      };
+      address?: {
+        zip_code?: string;
+        street_name?: string;
+        street_number?: number;
+      };
+    };
   };
 }
 
@@ -279,19 +300,43 @@ async function processPaymentNotification(paymentId: string): Promise<any> {
 
       console.log("Creating order with items:", preference.items);
 
+      // Extrair informações completas do cliente
+      const customerName = [
+        payment.payer?.first_name || payment.additional_info?.payer?.first_name,
+        payment.payer?.last_name || payment.additional_info?.payer?.last_name
+      ].filter(Boolean).join(" ") || payment.payer?.identification?.number || null;
+
+      const customerPhone = payment.payer?.phone?.number ||
+        payment.additional_info?.payer?.phone?.number ||
+        (payment.payer?.phone?.area_code && payment.payer?.phone?.number ?
+          `${payment.payer.phone.area_code}${payment.payer.phone.number}` : null) ||
+        (payment.additional_info?.payer?.phone?.area_code && payment.additional_info?.payer?.phone?.number ?
+          `${payment.additional_info.payer.phone.area_code}${payment.additional_info.payer.phone.number}` : null);
+
+      const customerCPF = payment.payer?.identification?.number || null;
+      const customerEmail = payment.payer?.email || null;
+
+      console.log("Customer info extracted:", {
+        name: customerName,
+        email: customerEmail,
+        phone: customerPhone,
+        cpf: customerCPF,
+      });
+
       // Criar o pedido com as informações do pagamento
       const { data: newOrder, error: createError } = await supabase
         .from("Orders")
         .insert({
           items: preference.items || [],
           total: payment.transaction_amount,
-          mp_preference_id: payment.preference_id,
+          mp_preference_id: payment.preference_id || null,
           mp_payment_id: payment.id,
           status: mappedStatus,
           mp_status: payment.status,
-          customer_name: payment.payer?.identification?.number || null,
-          customer_email: payment.payer?.email || null,
-          customer_phone: null,
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
+          customer_cpf: customerCPF,
         })
         .select()
         .single();
