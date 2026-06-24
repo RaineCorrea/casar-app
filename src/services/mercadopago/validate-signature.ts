@@ -1,5 +1,3 @@
-import { createHmac } from "crypto";
-
 export interface ValidateSignatureParams {
   signature: string | null;
   body: any;
@@ -12,17 +10,20 @@ export interface ValidateSignatureParams {
  *
  * @docs https://www.mercadopago.com.br/developers/pt/webhooks#signature
  */
-export function validateWebhookSignature({
+export async function validateWebhookSignature({
   signature,
   body,
   webhookSecret,
-}: ValidateSignatureParams): boolean {
+}: ValidateSignatureParams): Promise<boolean> {
   if (!signature) {
     console.error("Missing x-signature header");
     return false;
   }
 
   try {
+    // Dynamic import do crypto (Node.js only)
+    const { createHmac } = await import("crypto");
+
     // Parse the signature header
     const signatureParts = signature.split(",");
     const tsPart = signatureParts.find((part) => part.startsWith("ts="));

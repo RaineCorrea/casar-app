@@ -36,8 +36,8 @@ export async function POST({ request }: { request: Request }) {
       );
     }
 
-    // Validar assinatura
-    const isValid = validateWebhookSignature({
+    // Validar assinatura (agora é async)
+    const isValid = await validateWebhookSignature({
       signature,
       body,
       webhookSecret,
