@@ -25,7 +25,7 @@ npm run preview
 
 ## Environment Setup
 
-The app requires a `.env.local` file with Supabase credentials. Copy from `.env.example`:
+The app requires a `.env` file with Supabase credentials. Copy from `.env.example`:
 
 ```
 VITE_SUPABASE_URL=your_supabase_url

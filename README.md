@@ -47,6 +47,7 @@ O site inclui:
 ## ✨ Funcionalidades
 
 ### 🎨 Interface Pública
+
 - **Welcome Screen**: Tela de boas-vindas com animações elegantes e elementos decorativos
 - **Countdown**: Contagem regressiva em tempo real até o dia do casamento
 - **Location**: Seção com mapa interativo (Google Maps) e informações do local (Villa Massari, Nova Friburgo - RJ)
@@ -62,11 +63,13 @@ O site inclui:
   - Minicart com drawer deslizante
 
 ### 🔐 Área Administrativa
+
 - **Login Admin**: Autenticação segura com token JWT
 - **Dashboard de Convidados**: Lista completa de convidados confirmados
 - **Atualização em Tempo Real**: Integração com Supabase Realtime
 
 ### 🛒 Carrinho de Compras
+
 - Context API para gerenciamento de estado
 - Persistência no localStorage
 - Adicionar/remover itens
@@ -78,6 +81,7 @@ O site inclui:
 ## 🚀 Tecnologias
 
 ### Frontend
+
 - **React 19** - Biblioteca UI com últimos recursos
 - **TypeScript 5.9** - Tipagem estática
 - **Vite 7** - Build tool extremamente rápido
@@ -86,15 +90,18 @@ O site inclui:
 - **TanStack Query** - Gerenciamento de cache e requisições assíncronas
 
 ### Estilização
+
 - **Tailwind CSS v4** - Framework CSS utility-first
 - **CSS Custom Properties** - Sistema de design com cores personalizadas
 
 ### Validação & Formulários
+
 - **React Hook Form** - Gerenciamento de formulários
 - **Zod** - Validação de schemas TypeScript-first
 - **@hookform/resolvers** - Integração Zod + React Hook Form
 
 ### Backend & Banco de Dados
+
 - **Supabase** - Backend-as-a-Service com:
   - PostgreSQL
   - Realtime subscriptions
@@ -102,11 +109,13 @@ O site inclui:
   - Authentication
 
 ### Utilitários
+
 - **react-scroll** - Scroll suave entre seções
 - **sonner** - Notificações toast (alternativa moderna ao react-toastify)
 - **vite-tsconfig-paths** - Path aliases
 
 ### Desenvolvimento & Segurança
+
 - **ESLint** - Linting de código com regras de segurança React
 - **TypeScript ESLint** - Linting específico para TypeScript
 - **eslint-plugin-react-hooks** - Regras de segurança para React Hooks
@@ -161,17 +170,21 @@ src/
 ### Padrões de Arquitetura
 
 #### 1. **Validação de Ambiente**
+
 As variáveis de ambiente são validadas na startup via side-effect import em `main.tsx`:
+
 ```typescript
 import "./schemas/env"; // Valida env vars antes de renderizar
 ```
 
 #### 2. **TanStack Start + Router**
+
 - File-based routing com rotas type-safe
 - Server-side rendering (SSR) ready
 - Contexto compartilhado (queryClient)
 
 #### 3. **React Query para Gerenciamento de Dados**
+
 ```typescript
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -184,13 +197,19 @@ const queryClient = new QueryClient({
 ```
 
 #### 4. **Formulários com React Hook Form + Zod**
+
 ```typescript
-const { register, handleSubmit, formState: { errors } } = useForm({
+const {
+  register,
+  handleSubmit,
+  formState: { errors },
+} = useForm({
   resolver: zodResolver(guestSchema),
 });
 ```
 
 #### 5. **Context API para Estado Global**
+
 ```typescript
 const CartContext = React.createContext<CartContextType | undefined>(undefined);
 ```
@@ -200,17 +219,20 @@ const CartContext = React.createContext<CartContextType | undefined>(undefined);
 ## 🔧 Instalação e Configuração
 
 ### Pré-requisitos
+
 - Node.js 18+
 - npm ou yarn
 - Conta Supabase
 
 ### Passo 1: Clone o repositório
+
 ```bash
 git clone <repository-url>
 cd casar-app
 ```
 
 ### Passo 2: Instale as dependências
+
 ```bash
 npm install
 ```
@@ -224,11 +246,13 @@ npm install
 3. Obtenha suas credenciais em Settings > API
 
 ### Passo 4: Configure as variáveis de ambiente
+
 ```bash
-cp .env.example .env.local
+cp .env.example .env
 ```
 
-Edite `.env.local` com suas credenciais:
+Edite `.env` com suas credenciais:
+
 ```env
 # Cliente (exposto no bundle - apenas chaves públicas)
 VITE_SUPABASE_URL=https://seu-projeto.supabase.co
@@ -243,6 +267,7 @@ ADMIN_PASSWORD=senha_segura_123
 ```
 
 ### Passo 5: Inicie o servidor de desenvolvimento
+
 ```bash
 npm run dev
 ```
@@ -262,31 +287,37 @@ O projeto utiliza uma abordagem de **defense in depth** com múltiplas camadas d
 Políticas de segurança no nível de banco de dados:
 
 ##### Tabela `GuestList` (Convidados)
+
 - ✅ **Leitura pública**: Qualquer usuário pode visualizar convidados
 - ✅ **Inserção pública**: Usuários anônimos podem adicionar convidados
 - ❌ **UPDATE/DELETE bloqueados**: Apenas server-side (service_role) pode modificar
 
 ##### Tabela `Products` (Presentes)
+
 - ✅ **Leitura pública**: Qualquer usuário pode ver produtos
 - ❌ **INSERT/UPDATE/DELETE bloqueados**: Apenas server-side
 
 ##### Tabela `Orders` (Pedidos)
+
 - ✅ **Leitura própria**: Usuários autenticados veem apenas seus pedidos
 - ✅ **Inserção própria**: Usuários criam seus próprios pedidos
 - ❌ **UPDATE/DELETE bloqueados**: Apenas server-side (webhooks Mercado Pago)
 
 #### 2. **Rate Limiting - Login Admin**
+
 - ✅ **Máximo de 5 tentativas** em 5 minutos
 - ✅ **Bloqueio de 15 minutos** após excesso de tentativas
 - ✅ **Reset automático** após login bem-sucedido
 - ✅ **Proteção contra brute force** em memória
 
 #### 3. **Validação de Ambiente (Zod)**
+
 - ✅ **Validação na startup**: App não inicia se env vars inválidas
 - ✅ **Type-safe**: Inferência automática de tipos TypeScript
 - ✅ **Mensagens de erro claras** em português
 
 #### 4. **ESLint - React Security Rules**
+
 - ✅ **React Hooks exhaustive deps**: Previne bugs de useEffect
 - ✅ **TypeScript strict mode**: Erros de tipagem em tempo de desenvolvimento
 - ✅ **No console.log em produção**: Prevenção de vazamento de informações
@@ -311,19 +342,20 @@ const token = Buffer.from(
 ```
 
 **Características:**
+
 - ✅ Expiração de 24 horas
 - ✅ Validação em rotas protegidas
 - ⚠️ **Melhoria futura**: Migrar para JWT assinado com secret key
 
 ### 📊 Score de Segurança Atual
 
-| Camada | Status | Pontuação |
-|--------|--------|-----------|
-| RLS (Supabase) | ✅ Excelente | 10/10 |
-| Environment Vars | ✅ Corrigido | 10/10 |
-| Rate Limiting | ✅ Implementado | 9/10 |
-| Auth Admin | ⚠️ Adequado | 7/10 |
-| Code Quality | ✅ ESLint melhorado | 9/10 |
+| Camada           | Status              | Pontuação |
+| ---------------- | ------------------- | --------- |
+| RLS (Supabase)   | ✅ Excelente        | 10/10     |
+| Environment Vars | ✅ Corrigido        | 10/10     |
+| Rate Limiting    | ✅ Implementado     | 9/10      |
+| Auth Admin       | ⚠️ Adequado         | 7/10      |
+| Code Quality     | ✅ ESLint melhorado | 9/10      |
 
 **Média Geral**: **9/10** 🎉
 
@@ -338,46 +370,52 @@ const token = Buffer.from(
 
 ## 📦 Scripts Disponíveis
 
-| Comando | Descrição |
-|---------|-----------|
-| `npm run dev` | Inicia servidor de desenvolvimento (porta 5173) |
-| `npm run build` | Cria build de produção |
-| `npm run lint` | Executa ESLint |
-| `npm run preview` | Preview do build de produção |
-| `npm run test` | Executa testes Jest |
-| `npm run test:watch` | Executa testes em modo watch |
-| `npm run test:coverage` | Executa testes com coverage report |
+| Comando                 | Descrição                                       |
+| ----------------------- | ----------------------------------------------- |
+| `npm run dev`           | Inicia servidor de desenvolvimento (porta 5173) |
+| `npm run build`         | Cria build de produção                          |
+| `npm run lint`          | Executa ESLint                                  |
+| `npm run preview`       | Preview do build de produção                    |
+| `npm run test`          | Executa testes Jest                             |
+| `npm run test:watch`    | Executa testes em modo watch                    |
+| `npm run test:coverage` | Executa testes com coverage report              |
 
 ---
 
 ## 🎨 Variáveis de Ambiente
 
-### ⚠️ Variáveis de Cliente (Prefixo VITE_)
+### ⚠️ Variáveis de Cliente (Prefixo VITE\_)
+
 Variáveis com prefixo `VITE_` são expostas no bundle do cliente:
 
 **Obrigatórias:**
+
 - `VITE_SUPABASE_URL`: URL do projeto Supabase
 - `VITE_SUPABASE_KEY`: Chave anônima (public) - segura devido ao RLS
 
 **Opcionais:**
+
 - `VITE_MERCADO_PAGO_PUBLIC_KEY`: Chave pública do Mercado Pago (checkout frontend)
 
 ### 🔒 Variáveis de Servidor (Sem Prefixo)
+
 Variáveis sem prefixo `VITE_` são **apenas server-side** e **nunca** expostas no cliente:
 
 **Obrigatórias para funcionalidades completas:**
+
 - `SUPABASE_SERVICE_ROLE_KEY`: Chave service-role para operações admin (bypass RLS)
 - `MERCADO_PAGO_ACCESS_TOKEN`: Token de acesso do Mercado Pago (API pagamentos)
 - `ADMIN_USERNAME`: Usuário para acesso admin
 - `ADMIN_PASSWORD`: Senha para acesso admin (mínimo 8 caracteres)
 
 ### 🔐 Segurança de Environment Variables
+
 - ✅ **Variáveis sensíveis** (service role keys, access tokens, passwords) **NUNCA** devem ter prefixo `VITE_`
 - ✅ Apenas chaves públicas e non-sensitive keys podem ter prefixo `VITE_`
 - ✅ O sistema valida automaticamente as variáveis na startup via Zod schema
 - ❌ Se houver erro de validação, a aplicação não inicia
 
-> **Nota**: Nunca commite `.env.local` no versionamento. Use `.env.example` como template.
+> **Nota**: Nunca commite `.env` no versionamento. Use `.env.example` como template.
 
 ---
 
@@ -433,21 +471,25 @@ const { data, isLoading } = useQuery({
 ### ✨ v1.1.0 - Atualização de Segurança (2026-06-23)
 
 **🔒 Correções Críticas de Segurança:**
+
 - ✅ **Corrigido vazamento de MERCADO_PAGO_ACCESS_TOKEN**: Movido de `VITE_MERCADO_PAGO_ACCESS_TOKEN` (cliente) para `MERCADO_PAGO_ACCESS_TOKEN` (server-only)
 - ✅ **Rate Limiting no Login Admin**: Implementado sistema de 5 tentativas/5min + bloqueio de 15min
 - ✅ **ESLint Melhorado**: Adicionadas regras de segurança React/TypeScript
 
 **⚡ Melhorias de Código:**
+
 - ✅ Corrigido `setState` em useEffect (CartContext)
 - ✅ Eliminado blocos `catch` vazios (melhor tratamento de erro)
 - ✅ Adicionado dependências de desenvolvimento para ESLint moderno
 
 **📦 Novas Dependências:**
+
 - `@eslint/js`
 - `typescript-eslint`
 - `eslint-plugin-react-hooks`
 
 **📚 Documentação:**
+
 - ✅ README atualizado com melhores práticas de segurança
 - ✅ Documentação de environment variables melhorada
 - ✅ Score de segurança documentado (9/10)

@@ -3,6 +3,6 @@ node_modules
 .idea
 *.log
 dist
-.env.local
+.env
 .DS_Store
 Thumbs.db
