@@ -68,9 +68,8 @@ export const createPreference = createServerFn({ method: "POST" })
       items: normalizedItems,
       back_urls: backUrls,
       external_reference: reference,
-      notification_url: `${origin}/api/webhooks/mercadopago`,
-      // auto_return removido temporariamente - Mercado Pago não aceita localhost em back_urls
-      // auto_return: "approved",
+      notification_url: `${origin}/.netlify/functions/mercadopago-webhook`,
+      auto_return: "approved",
       binary_mode: true,
       statement_descriptor: "MATHEUSNICOLLY",
       payment_methods: {
