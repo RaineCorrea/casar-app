@@ -8,9 +8,14 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const navigate = useNavigate();
 
   const { itemCount, openCart } = useCart();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -109,7 +114,7 @@ export default function Header() {
               scrolled ? "text-forest-dark" : "text-cream"
             }`}
           />
-          {itemCount > 0 && (
+          {mounted && itemCount > 0 && (
             <span className="absolute -top-1 -right-1 bg-terracotta text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
               {itemCount}
             </span>
@@ -154,7 +159,7 @@ export default function Header() {
                 scrolled ? "text-forest-dark" : "text-cream"
               }`}
             />
-            {itemCount > 0 && (
+            {mounted && itemCount > 0 && (
               <span className="absolute -top-1 -right-1 bg-pink-600 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
                 {itemCount}
               </span>

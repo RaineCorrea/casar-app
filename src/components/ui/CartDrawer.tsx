@@ -4,7 +4,6 @@ import {
   IconeX,
   IconeCarrinhoVazio,
   IconeLixeira,
-  IconeWhatsApp,
 } from "../icons";
 import {
   Sheet,
@@ -12,7 +11,7 @@ import {
 } from "./sheet";
 import { createPreference } from "../../services/mercadopago/create-preference";
 import { saveOrderAfterCheckout } from "../../services/supabase/orders";
-import { toastError, toastSuccess } from "../../utils/toast";
+import { toastError } from "../../utils/toast";
 
 export function CartDrawer() {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,17 +40,24 @@ export function CartDrawer() {
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
 
+      const externalReference = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
       const response = await createPreference({
-        items: items.map((item) => ({
-          id: item.id,
-          title: item.descricao || "Produto",
-          quantity: item.quantity,
-          unit_price: Number(item.preco),
-        })),
-        backUrls: {
-          success: `${origin}/checkout/success`,
-          failure: `${origin}/checkout/failure`,
-          pending: `${origin}/checkout/pending`,
+        data: {
+          items: items.map((item) => ({
+            id: item.id,
+            title: item.descricao || "Produto",
+            quantity: item.quantity,
+            unit_price: Number(item.preco),
+            description: item.descricao || "Produto",
+            picture_url: item.image,
+          })),
+          backUrls: {
+            success: `${origin}/checkout/success`,
+            failure: `${origin}/checkout/failure`,
+            pending: `${origin}/checkout/pending`,
+          },
+          externalReference,
         },
       });
 
@@ -65,16 +71,18 @@ export function CartDrawer() {
             image: item.image,
           })),
           total: total,
-          mpPreferenceId: response.preference_id,
+          mpPreferenceId: response.preferenceId,
         });
       } catch (saveError) {
         console.error("Erro ao salvar pedido:", saveError);
         // Continuar para o checkout mesmo se falhar ao salvar
       }
 
-      window.location.href = response.init_point;
+      window.location.href = response.initPoint;
     } catch (error) {
-      toastError("Erro ao criar preferência de pagamento. Tente novamente.");
+      console.error("Checkout error:", error);
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      toastError(`Erro ao criar preferência de pagamento: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
