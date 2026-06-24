@@ -1,41 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { IconeErro } from "../components/icons";
-import { useSearch } from "@tanstack/react-router";
-import { checkOrderStatus } from "../services/supabase/orders";
-import { useState, useEffect } from "react";
-
-interface SearchParams {
-  preference_id?: string;
-}
 
 export const Route = createFileRoute("/checkout/failure")({
   component: CheckoutFailure,
 });
 
 function CheckoutFailure() {
-  const search = useSearch({ from: "/checkout/failure" }) as SearchParams;
-  const preferenceId = search.preference_id;
-  const [order, setOrder] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchOrderStatus = async () => {
-      if (preferenceId) {
-        try {
-          const orderData = await checkOrderStatus(preferenceId);
-          setOrder(orderData);
-        } catch (error) {
-          console.error("Erro ao buscar status do pedido:", error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false);
-      }
-    };
-
-    fetchOrderStatus();
-  }, [preferenceId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-cream px-6">
@@ -54,26 +24,6 @@ function CheckoutFailure() {
           Houve um problema com o pagamento. Por favor, tente novamente ou entre
           em contato conosco.
         </p>
-
-        {!loading && order && (
-          <div className="bg-wheat/50 rounded-xl p-6 mb-8 border border-red-300">
-            <h2 className="font-display text-forest text-xl mb-4 font-medium">
-              Detalhes do Pedido
-            </h2>
-            <div className="space-y-2 text-left">
-              <p className="text-forest-dark">
-                <span className="font-semibold">Pedido ID:</span>{" "}
-                {order.id.slice(0, 8)}...
-              </p>
-              <p className="text-forest-dark">
-                <span className="font-semibold">Status:</span>{" "}
-                <span className="text-red-600 font-semibold">
-                  {order.status === "rejected" ? "Rejeitado" : "Pendente"}
-                </span>
-              </p>
-            </div>
-          </div>
-        )}
 
         <div className="space-y-4">
           <a

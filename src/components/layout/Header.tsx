@@ -13,6 +13,7 @@ export default function Header() {
 
   const { itemCount, openCart } = useCart();
 
+  // Hydration mismatch fix: badge do carrinho só renderiza no cliente
   useEffect(() => {
     setMounted(true);
   }, []);
