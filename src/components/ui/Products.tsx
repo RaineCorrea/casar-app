@@ -4,7 +4,16 @@ import {
   type ProductsSortBy,
 } from "../../services/supabase/products";
 import { useCart } from "../contexts/CartContext";
-import { IconeCarrinho } from "../icons";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
+import { Button } from "./button";
+import { ProductCardSkeleton, ProductsListSkeleton } from "./Skeleton";
+import { ProductCard } from "./ProductCard";
 
 type SortOption = {
   value: ProductsSortBy;
@@ -17,64 +26,9 @@ const sortOptions: SortOption[] = [
   { value: "descricao_asc", label: "A-Z" },
 ];
 
-function AddToCartButton({
-  productId,
-  image,
-  descricao,
-  preco,
-  link,
-}: {
-  productId: string;
-  image: string;
-  descricao?: string;
-  preco: number;
-  link?: string;
-}) {
-  const { addItem } = useCart();
-  const [added, setAdded] = useState(false);
-
-  const handleAddToCart = () => {
-    addItem({
-      id: productId,
-      image,
-      descricao: descricao || "Produto",
-      preco,
-      link,
-    });
-    setAdded(true);
-
-    setTimeout(() => setAdded(false), 2000);
-  };
-
-  return (
-    <button
-      onClick={handleAddToCart}
-      className={`group/add w-full py-2.5 sm:py-3 px-3 sm:px-6 font-body text-center rounded-xl transition-all duration-300 cursor-pointer ${
-        added
-          ? "bg-green-500 text-white"
-          : "bg-forest text-cream hover:bg-forest-dark hover:shadow-soft"
-      }`}
-      aria-label={`Adicionar ${descricao} ao carrinho`}
-    >
-      {added ? (
-        <span className="flex items-center justify-center gap-1.5 sm:gap-2">
-          <span className="hidden sm:inline">✓</span>
-          <span className="text-sm sm:text-base">Adicionado!</span>
-        </span>
-      ) : (
-        <span className="flex items-center justify-center gap-1.5 sm:gap-2">
-          <span className="text-sm sm:text-base truncate">
-            Adicionar ao Carrinho
-          </span>
-          <IconeCarrinho className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
-        </span>
-      )}
-    </button>
-  );
-}
-
 export default function Products() {
   const [sortBy, setSortBy] = useState<ProductsSortBy>("descricao_asc");
+  const { addItem } = useCart();
 
   const {
     data,
@@ -88,17 +42,20 @@ export default function Products() {
   const allProducts = data?.pages.flatMap((page) => page.products) ?? [];
   const totalCount = data?.pages[0]?.totalCount ?? 0;
 
+  const handleAddToCart = (product: {
+    id: string;
+    image: string;
+    descricao: string;
+    preco: number;
+    link?: string;
+  }) => {
+    addItem(product);
+  };
+
   function handleLoadMore() {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
-  }
-
-  function formatPrice(price: number): string {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(price);
   }
 
   return (
@@ -123,30 +80,28 @@ export default function Products() {
         </div>
 
         <div className="mb-8 flex justify-end">
-          <select
+          <Select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as ProductsSortBy)}
-            className="px-4 py-2 rounded-xl border-2 border-forest/20 bg-cream text-forest font-body focus:outline-none focus:ring-2 focus:ring-forest/50"
+            onValueChange={(value) => setSortBy(value as ProductsSortBy)}
             aria-label="Ordenar produtos"
           >
-            {sortOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              className="px-4 py-2 rounded-xl border-2 border-forest/20 bg-cream text-forest font-body focus:outline-none focus:ring-2 focus:ring-forest/50 w-fit"
+            >
+              <SelectValue placeholder="Ordenar por" />
+            </SelectTrigger>
+            <SelectContent>
+              {sortOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {isLoading ? (
-          <div className="text-center py-20" role="status" aria-live="polite">
-            <div
-              className="inline-block animate-spin rounded-full h-20 w-20 border-4 border-sage-light border-t-forest"
-              aria-hidden="true"
-            ></div>
-            <p className="mt-6 text-forest-dark font-body text-lg">
-              Carregando presentes...
-            </p>
-          </div>
+          <ProductsListSkeleton count={6} />
         ) : error ? (
           <div className="text-center py-20 bg-terracotta/10 border-2 border-terracotta rounded-3xl">
             <p className="text-terracotta-dark font-body text-lg">
@@ -162,49 +117,23 @@ export default function Products() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {allProducts.map((product) => (
-                <article
+              {allProducts.map((product, index) => (
+                <ProductCard
                   key={product.id}
-                  className="bg-cream/95 backdrop-blur-sm rounded-3xl shadow-soft overflow-hidden hover:shadow-lifted transition-all duration-300 group"
-                  aria-labelledby={`product-${product.id}-name`}
-                >
-                  <div className="aspect-square overflow-hidden bg-wheat/50">
-                    <img
-                      src={product.image}
-                      alt={product.descricao}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-
-                  <div className="p-6">
-                    <h3
-                      id={`product-${product.id}-name`}
-                      className="font-display text-forest-dark text-xl mb-3 font-medium min-h-15"
-                    >
-                      {product.descricao}
-                    </h3>
-
-                    <div className="flex items-center justify-between mb-4">
-                      <p className="font-body text-terracotta text-2xl font-semibold">
-                        {formatPrice(product.preco)}
-                      </p>
-                    </div>
-
-                    <AddToCartButton
-                      productId={product.id}
-                      image={product.image}
-                      descricao={product.descricao}
-                      preco={product.preco}
-                      link={product.link}
-                    />
-                  </div>
-                </article>
+                  id={product.id}
+                  image={product.image}
+                  descricao={product.descricao}
+                  preco={product.preco}
+                  link={product.link}
+                  index={index}
+                  onAddToCart={handleAddToCart}
+                />
               ))}
             </div>
 
             {hasNextPage && (
               <div className="mt-12 text-center">
-                <button
+                <Button
                   onClick={handleLoadMore}
                   disabled={isFetchingNextPage}
                   className="inline-flex items-center gap-2 px-8 py-4 bg-forest text-cream font-body text-lg rounded-xl hover:bg-forest-dark transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-soft"
@@ -236,7 +165,7 @@ export default function Products() {
                       </svg>
                     </>
                   )}
-                </button>
+                </Button>
 
                 <p className="mt-4 text-forest/70 font-body text-sm">
                   Mostrando {allProducts.length} de {totalCount} produtos

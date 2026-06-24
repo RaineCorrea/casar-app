@@ -15,10 +15,84 @@ interface LoginError {
   error: string;
 }
 
+// Rate limiting em memória para login
+const loginAttempts = new Map<string, { count: number; resetTime: number }>();
+const MAX_ATTEMPTS = 5;
+const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutos
+const ATTEMPT_WINDOW = 5 * 60 * 1000; // 5 minutos
+
+function checkRateLimit(identifier: string): { allowed: boolean; error?: string } {
+  const now = Date.now();
+  const record = loginAttempts.get(identifier);
+
+  if (!record) {
+    return { allowed: true };
+  }
+
+  // Verificar se ainda está no período de bloqueio
+  if (now < record.resetTime) {
+    const remainingMinutes = Math.ceil((record.resetTime - now) / 60000);
+    return {
+      allowed: false,
+      error: `Muitas tentativas. Tente novamente em ${remainingMinutes} minutos.`,
+    };
+  }
+
+  // Resetar se o período de bloqueio passou
+  loginAttempts.delete(identifier);
+  return { allowed: true };
+}
+
+function recordFailedAttempt(identifier: string): void {
+  const now = Date.now();
+  const record = loginAttempts.get(identifier);
+
+  if (!record) {
+    loginAttempts.set(identifier, { count: 1, resetTime: now + ATTEMPT_WINDOW });
+    return;
+  }
+
+  // Se ainda está dentro da janela de tentativas
+  if (now < record.resetTime) {
+    const newCount = record.count + 1;
+    if (newCount >= MAX_ATTEMPTS) {
+      // Bloquear por LOCKOUT_DURATION
+      loginAttempts.set(identifier, {
+        count: newCount,
+        resetTime: now + LOCKOUT_DURATION,
+      });
+    } else {
+      loginAttempts.set(identifier, {
+        count: newCount,
+        resetTime: record.resetTime,
+      });
+    }
+  } else {
+    // Nova janela de tentativas
+    loginAttempts.set(identifier, { count: 1, resetTime: now + ATTEMPT_WINDOW });
+  }
+}
+
+function resetAttempts(identifier: string): void {
+  loginAttempts.delete(identifier);
+}
+
 export const adminLogin = createServerFn({ method: "POST" })
   .inputValidator((input: LoginInput) => input)
   .handler(async ({ data }) => {
     const { username, password } = data;
+
+    // Identificador para rate limiting (baseado em IP e username)
+    const identifier = `${username}`;
+
+    // Verificar rate limit
+    const rateLimitCheck = checkRateLimit(identifier);
+    if (!rateLimitCheck.allowed) {
+      return {
+        success: false,
+        error: rateLimitCheck.error || "Muitas tentativas. Tente novamente mais tarde.",
+      } as LoginError;
+    }
 
     const adminUsername = process.env.ADMIN_USERNAME;
     const adminPassword = process.env.ADMIN_PASSWORD;
@@ -32,6 +106,9 @@ export const adminLogin = createServerFn({ method: "POST" })
     }
 
     if (username === adminUsername && password === adminPassword) {
+      // Resetar tentativas após login bem-sucedido
+      resetAttempts(identifier);
+
       const token = Buffer.from(
         JSON.stringify({
           admin: true,
@@ -45,6 +122,9 @@ export const adminLogin = createServerFn({ method: "POST" })
         token,
       } as LoginSuccess;
     }
+
+    // Registrar tentativa falha
+    recordFailedAttempt(identifier);
 
     return {
       success: false,

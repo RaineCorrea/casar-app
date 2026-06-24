@@ -1,0 +1,15 @@
+# Robots.txt
+# Permite mecanismos de busca a indexar o site
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://casar-app.example.com/sitemap.xml
+
+# Bloquear áreas administrativas (se houver)
+Disallow: /admin
+Disallow: /api/
+
+# Bloquear páginas de checkout (não precisam ser indexadas)
+Disallow: /checkout/

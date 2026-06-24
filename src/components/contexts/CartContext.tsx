@@ -27,23 +27,17 @@ const CartContext = React.createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [items, setItems] = React.useState<CartItem[]>([]);
-  const [isloading, setIsLoading] = React.useState<boolean>(true);
+  // Inicializar state com dados do localStorage para evitar setState em effect
+  const [items, setItems] = React.useState<CartItem[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const savedCart = localStorage.getItem("casar-cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
   useEffect(() => {
-    const savedCart = localStorage.getItem("casar-cart");
-    if (savedCart) {
-      setItems(JSON.parse(savedCart));
-    }
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    if (!isloading) {
-      localStorage.setItem("casar-cart", JSON.stringify(items));
-    }
-  }, [items, isloading]);
+    localStorage.setItem("casar-cart", JSON.stringify(items));
+  }, [items]);
 
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);

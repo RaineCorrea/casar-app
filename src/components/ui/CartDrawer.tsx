@@ -1,13 +1,20 @@
+import { useState } from "react";
 import { useCart } from "../contexts/CartContext";
-import { useEffect } from "react";
 import {
   IconeX,
   IconeCarrinhoVazio,
   IconeLixeira,
-  IconeWhatsApp,
 } from "../icons";
+import {
+  Sheet,
+  SheetContent,
+} from "./sheet";
+import { createPreference } from "../../services/mercadopago/create-preference";
+import { saveOrderAfterCheckout } from "../../services/supabase/orders";
+import { toastError } from "../../utils/toast";
 
 export function CartDrawer() {
+  const [isLoading, setIsLoading] = useState(false);
   const {
     items,
     total,
@@ -25,65 +32,68 @@ export function CartDrawer() {
     }).format(value);
   };
 
-  const handleCheckout = () => {
-    const itemsList = items
-      .map((item) => {
-        const subtotal = item.preco * item.quantity;
-        return `• ${item.descricao || "Produto"} (${
-          item.quantity
-        }x) - ${formatCurrency(subtotal)}`;
-      })
-      .join("\n");
+  const handleCheckout = async () => {
+    if (isLoading) return;
 
-    const text = `*Pedido da Lista de Presentes*\n\n${itemsList}\n\n*Total: ${formatCurrency(
-      total,
-    )}*`;
+    setIsLoading(true);
 
-    const phoneNumber = "5522997000228";
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
-      text,
-    )}`;
+    try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
 
-    window.open(whatsappUrl, "_blank");
+      const externalReference = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+      const response = await createPreference({
+        data: {
+          items: items.map((item) => ({
+            id: item.id,
+            title: item.descricao || "Produto",
+            quantity: item.quantity,
+            unit_price: Number(item.preco),
+            description: item.descricao || "Produto",
+            picture_url: item.image,
+          })),
+          backUrls: {
+            success: `${origin}/checkout/success`,
+            failure: `${origin}/checkout/failure`,
+            pending: `${origin}/checkout/pending`,
+          },
+          externalReference,
+        },
+      });
+
+      try {
+        await saveOrderAfterCheckout({
+          items: items.map((item) => ({
+            id: item.id,
+            title: item.descricao || "Produto",
+            quantity: item.quantity,
+            unit_price: Number(item.preco),
+            image: item.image,
+          })),
+          total: total,
+          mpPreferenceId: response.preferenceId,
+        });
+      } catch (saveError) {
+        console.error("Erro ao salvar pedido:", saveError);
+        // Continuar para o checkout mesmo se falhar ao salvar
+      }
+
+      window.location.href = response.initPoint;
+    } catch (error) {
+      console.error("Checkout error:", error);
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      toastError(`Erro ao criar preferência de pagamento: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        closeCart();
-      }
-    };
-
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, closeCart]);
-
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
-
   return (
-    <>
-      <div
-        className={`fixed inset-0 bg-black/50 z-50 transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={closeCart}
-        aria-hidden="true"
-      />
-
-      <div
-        className={`fixed top-0 right-0 h-full w-full sm:max-w-md bg-cream z-50 shadow-2xl transform transition-transform duration-300 ease-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+    <Sheet open={isOpen} onOpenChange={(open) => !open && closeCart()}>
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-md bg-cream shadow-2xl h-full"
+        showCloseButton={false}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between p-4 sm:p-6 border-b border-forest/20">
@@ -212,10 +222,12 @@ export function CartDrawer() {
 
               <button
                 onClick={handleCheckout}
-                className="w-full bg-green-500 text-white py-3 px-4 sm:py-3 rounded-xl font-body font-bold text-sm sm:text-base hover:bg-green-600 transition-colors flex items-center justify-center gap-2 mb-2 cursor-pointer"
+                disabled={isLoading}
+                className="w-full bg-forest text-white py-3 px-4 sm:py-3 rounded-xl font-body font-bold text-sm sm:text-base hover:bg-forest-dark transition-colors flex items-center justify-center gap-2 mb-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <IconeWhatsApp />
-                <span className="truncate">Finalizar via WhatsApp</span>
+                <span className="truncate">
+                  {isLoading ? "Criando pagamento..." : "Finalizar via Mercado Pago"}
+                </span>
               </button>
 
               <button
@@ -227,7 +239,7 @@ export function CartDrawer() {
             </div>
           )}
         </div>
-      </div>
-    </>
+      </SheetContent>
+    </Sheet>
   );
 }

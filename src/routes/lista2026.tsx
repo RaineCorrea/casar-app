@@ -5,6 +5,7 @@ import {
 } from "../services/supabase/guests";
 import { validateAdminToken } from "../services/auth/admin";
 import { useEffect } from "react";
+import { IconeEmail, IconeTelefone } from "../components/icons";
 
 export const Route = createFileRoute("/lista2026")({
   loader: async ({ context }) => {
@@ -28,6 +29,9 @@ function Lista2026() {
     localStorage.removeItem("admin_token");
     window.location.href = "/login";
   };
+
+  // Mostrar loading apenas se não houver dados e estiver carregando
+  const showLoading = isLoading && !guests;
 
   return (
     <div
@@ -57,7 +61,7 @@ function Lista2026() {
             </button>
           </div>
 
-          {isLoading && (
+          {showLoading && (
             <div className="text-center py-12" role="status" aria-live="polite">
               <div
                 className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-sage-light border-t-forest"
@@ -77,7 +81,7 @@ function Lista2026() {
             </div>
           )}
 
-          {!isLoading && !error && (guests?.length ?? 0) === 0 && (
+          {!showLoading && !error && (guests?.length ?? 0) === 0 && (
             <div className="text-center py-12 bg-wheat/50 rounded-2xl">
               <p className="text-forest-dark font-body text-lg">
                 Nenhum convidado confirmado ainda.
@@ -85,7 +89,7 @@ function Lista2026() {
             </div>
           )}
 
-          {!isLoading && !error && guests && guests.length > 0 && (
+          {!showLoading && !error && guests && guests.length > 0 && (
             <div className="space-y-4">
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-forest/20">
                 <span className="font-body text-base font-semibold text-forest-dark">
@@ -108,18 +112,14 @@ function Lista2026() {
                         <div className="space-y-2 font-body text-sm text-forest-dark/80">
                           {guest.email && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg" aria-hidden="true">
-                                ✉
-                              </span>
+                              <IconeEmail />
                               <span className="sr-only">E-mail:</span>
                               <span>{guest.email}</span>
                             </div>
                           )}
                           {guest.telefone && (
                             <div className="flex items-center gap-2">
-                              <span className="text-lg" aria-hidden="true">
-                                📱
-                              </span>
+                              <IconeTelefone />
                               <span className="sr-only">Telefone:</span>
                               <span>{guest.telefone}</span>
                             </div>

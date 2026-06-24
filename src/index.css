@@ -1,6 +1,38 @@
 @import "tailwindcss";
 
 :root {
+  /* shadcn/ui CSS variables - mapeadas para cores do projeto */
+  --background: 250 248 243; /* cream */
+  --foreground: 15 35 24; /* forest-dark */
+
+  --card: 250 248 243; /* cream */
+  --card-foreground: 15 35 24; /* forest-dark */
+
+  --popover: 250 248 243; /* cream */
+  --popover-foreground: 15 35 24; /* forest-dark */
+
+  --primary: 30 58 47; /* forest */
+  --primary-foreground: 250 248 243; /* cream */
+
+  --secondary: 90 125 86; /* sage */
+  --secondary-foreground: 250 248 243; /* cream */
+
+  --muted: 245 230 211; /* wheat */
+  --muted-foreground: 61 90 58; /* sage-dark */
+
+  --accent: 181 98 58; /* terracotta */
+  --accent-foreground: 250 248 243; /* cream */
+
+  --destructive: 220 38 38;
+  --destructive-foreground: 250 248 243;
+
+  --border: 139 168 136; /* sage-light */
+  --input: 139 168 136; /* sage-light */
+  --ring: 181 98 58; /* terracotta */
+
+  --radius: 0.5rem;
+
+  /* Fontes customizadas do projeto */
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "Cormorant Garamond", "Times New Roman", serif;
   --font-accent: "Tangerine", cursive;
@@ -39,6 +71,11 @@
   --animate-float: float 6s ease-in-out infinite;
   --animate-sway: sway 4s ease-in-out infinite;
   --animate-pulse-soft: pulse-soft 3s ease-in-out infinite;
+  --animate-slide-left: slide-left 0.6s ease-out forwards;
+  --animate-slide-right: slide-right 0.6s ease-out forwards;
+  --animate-scale-in: scale-in 0.5s ease-out forwards;
+  --animate-bounce: bounce 1s ease-in-out;
+  --animate-spin-slow: spin 3s linear infinite;
 }
 
 @keyframes fade-up {
@@ -75,6 +112,57 @@
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
+}
+
+@keyframes slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 html {
@@ -188,26 +276,125 @@ body::before {
   background-size: 60px 60px;
 }
 
-.Toastify__toast {
-  font-family: var(--font-body) !important;
-  border-radius: 12px !important;
-  box-shadow: var(--shadow-lifted) !important;
-  padding: 16px !important;
+/* =====================================================
+   TRANSIÇÕES E ANIMAÇÕES
+   ===================================================== */
+
+/* Transições suaves */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.Toastify__toast--success {
-  background: var(--color-forest) !important;
-  color: var(--color-cream) !important;
+.transition-fast {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.Toastify__toast--error {
-  background: #dc2626 !important;
-  color: #ffffff !important;
-  border: 2px solid #b91c1c !important;
+.transition-slow {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.Toastify__toast-body {
-  font-size: 16px !important;
-  font-weight: 500 !important;
-  line-height: 1.5 !important;
+/* Efeitos de hover */
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lifted);
+}
+
+.hover-scale {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-glow {
+  transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-glow:hover {
+  box-shadow: var(--shadow-glow);
+}
+
+/* Animações de entrada */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out,
+              transform 0.8s ease-out;
+}
+
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Animações de loading */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-wheat) 0%,
+    var(--color-cream) 50%,
+    var(--color-wheat) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-wheat) 0%,
+    var(--color-cream-dark) 50%,
+    var(--color-wheat) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius);
+}
+
+/* Feedback visual */
+.feedback-success {
+  animation: scale-in 0.5s ease-out;
+  border-color: var(--color-sage) !important;
+}
+
+.feedback-error {
+  animation: shake 0.5s ease-out;
+  border-color: var(--color-terracotta) !important;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-sage-light);
+  border-top-color: var(--color-forest);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Delay de animação */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+
+/* Duração de animação */
+.duration-300 { animation-duration: 300ms; }
+.duration-500 { animation-duration: 500ms; }
+.duration-700 { animation-duration: 700ms; }
+.duration-1000 { animation-duration: 1000ms; }

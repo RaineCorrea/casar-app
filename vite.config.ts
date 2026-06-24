@@ -11,4 +11,5 @@ export default defineConfig({
   server: {
     port: 5173,
   },
+  cacheDir: "C:\\Users\\raine\\.cache\\vite\\casar-app",
 });

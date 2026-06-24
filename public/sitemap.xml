@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Página Inicial -->
+  <url>
+    <loc>https://casar-app.example.com/</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Lista de Presentes -->
+  <url>
+    <loc>https://casar-app.example.com/#products</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- RSVP -->
+  <url>
+    <loc>https://casar-app.example.com/#rsvp</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Localização -->
+  <url>
+    <loc>https://casar-app.example.com/#location</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Checkout - Success -->
+  <url>
+    <loc>https://casar-app.example.com/checkout/success</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Checkout - Failure -->
+  <url>
+    <loc>https://casar-app.example.com/checkout/failure</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Checkout - Pending -->
+  <url>
+    <loc>https://casar-app.example.com/checkout/pending</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>never</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Login (Admin) -->
+  <url>
+    <loc>https://casar-app.example.com/login</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.4</priority>
+  </url>
+
+  <!-- Lista 2026 -->
+  <url>
+    <loc>https://casar-app.example.com/lista2026</loc>
+    <lastmod>2026-06-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>

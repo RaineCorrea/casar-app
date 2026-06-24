@@ -1,20 +1,9 @@
-import { toast, type ToastOptions, type TypeOptions } from "react-toastify";
+import { toast } from "sonner";
 
-function showToast(
-  message: string,
-  type: TypeOptions,
-  options?: ToastOptions,
-) {
-  return toast(message, {
-    type,
-    ...options,
-  });
+export function toastSuccess(message: string) {
+  return toast.success(message);
 }
 
-export function totastSuccess(message: string, options?: ToastOptions) {
-  return showToast(message, "success", options);
-}
-
-export function toastError(message: string, options?: ToastOptions) {
-  return showToast(message, "error", options);
+export function toastError(message: string) {
+  return toast.error(message);
 }
