@@ -43,7 +43,7 @@ export const receiveWebhook = createServerFn({ method: "POST" })
 
 async function processPaymentNotification(paymentId: string) {
   try {
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    const accessToken = import.meta.env.MERCADO_PAGO_ACCESS_TOKEN || import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
 
     if (!accessToken) {
       throw new Error("MERCADO_PAGO_ACCESS_TOKEN not configured");
@@ -121,7 +121,7 @@ async function processPaymentNotification(paymentId: string) {
 export const getPaymentInfo = createServerFn({ method: "GET" })
   .inputValidator((paymentId: string) => paymentId)
   .handler(async ({ data: paymentId }) => {
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    const accessToken = import.meta.env.MERCADO_PAGO_ACCESS_TOKEN || import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
 
     if (!accessToken) {
       throw new Error("MERCADO_PAGO_ACCESS_TOKEN not configured");

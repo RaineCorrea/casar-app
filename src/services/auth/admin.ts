@@ -94,8 +94,8 @@ export const adminLogin = createServerFn({ method: "POST" })
       } as LoginError;
     }
 
-    const adminUsername = process.env.ADMIN_USERNAME;
-    const adminPassword = process.env.ADMIN_PASSWORD;
+    const adminUsername = import.meta.env.ADMIN_USERNAME;
+    const adminPassword = import.meta.env.ADMIN_PASSWORD;
 
     if (!adminUsername || !adminPassword) {
       console.error("Credenciais admin não configuradas");

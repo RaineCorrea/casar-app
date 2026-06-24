@@ -45,7 +45,7 @@ export const createPreference = createServerFn({ method: "POST" })
     const validatedData = CreatePreferenceSchema.parse(data);
     const { items, backUrls, payer, externalReference } = validatedData;
 
-    const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
+    const accessToken = import.meta.env.MERCADO_PAGO_ACCESS_TOKEN || import.meta.env.VITE_MERCADO_PAGO_ACCESS_TOKEN;
 
     if (!accessToken) {
       console.error("MERCADO_PAGO_ACCESS_TOKEN not configured");

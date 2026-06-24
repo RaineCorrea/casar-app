@@ -37,8 +37,8 @@ export interface Order {
 export const createOrder = createServerFn({ method: "POST" })
   .inputValidator((data: CreateOrderData) => data)
   .handler(async ({ data }) => {
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const serviceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       throw new Error("Supabase credentials not configured");
@@ -78,8 +78,8 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
     }) => data
   )
   .handler(async ({ data }) => {
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const serviceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       throw new Error("Supabase credentials not configured");
@@ -133,8 +133,8 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
 export const getOrderById = createServerFn({ method: "GET" })
   .inputValidator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const supabaseKey = process.env.VITE_SUPABASE_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
       throw new Error("Supabase credentials not configured");
@@ -158,8 +158,8 @@ export const getOrderById = createServerFn({ method: "GET" })
 export const getOrderByPreferenceId = createServerFn({ method: "GET" })
   .inputValidator((preferenceId: string) => preferenceId)
   .handler(async ({ data: preferenceId }) => {
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const supabaseKey = process.env.VITE_SUPABASE_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
       throw new Error("Supabase credentials not configured");
@@ -182,8 +182,8 @@ export const getOrderByPreferenceId = createServerFn({ method: "GET" })
 
 export const listAllOrders = createServerFn({ method: "GET" })
   .handler(async () => {
-    const supabaseUrl = process.env.VITE_SUPABASE_URL;
-    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const serviceRoleKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceRoleKey) {
       throw new Error("Supabase credentials not configured");
