@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { updateOrderStatus, getOrderByPreferenceId } from "../supabase/orders";
+import { updateOrderStatus, findOrderByPreferenceId } from "../supabase/orders";
 import { createClient } from "@supabase/supabase-js";
 
 interface PaymentInfo {
@@ -92,14 +92,12 @@ async function processPaymentNotification(paymentId: string) {
     const mappedStatus = statusMap[payment.status] || "pending";
 
     // Verificar se o pedido já existe
-    try {
-      const existingOrder = await getOrderByPreferenceId({
-        data: payment.preference_id,
-      });
+    const existingOrder = await findOrderByPreferenceId(payment.preference_id);
 
-      if (existingOrder) {
-        // Pedido já existe, apenas atualizar o status
-        console.log("Order already exists, updating status");
+    if (existingOrder) {
+      // Pedido já existe, apenas atualizar o status
+      console.log("Order already exists, updating status:", existingOrder.id);
+      try {
         await updateOrderStatus({
           data: {
             mpPaymentId: payment.id,
@@ -116,11 +114,15 @@ async function processPaymentNotification(paymentId: string) {
           paymentId: payment.id,
           status: payment.status,
           action: "updated",
+          orderId: existingOrder.id,
         };
+      } catch (updateError) {
+        console.error("Failed to update order status:", updateError);
+        return { success: false, error: "Failed to update order status" };
       }
-    } catch (error) {
-      console.log("Order not found, creating new order");
     }
+
+    console.log("Order not found, creating new order");
 
     // Pedido não existe, criar com os dados do pagamento
     try {
@@ -134,6 +136,7 @@ async function processPaymentNotification(paymentId: string) {
       const supabase = createClient(supabaseUrl, serviceRoleKey);
 
       // Buscar informações adicionais da preferência
+      console.log("Fetching preference info:", payment.preference_id);
       const preferenceResponse = await fetch(
         `https://api.mercadopago.com/checkout/preferences/${payment.preference_id}`,
         {
@@ -145,10 +148,17 @@ async function processPaymentNotification(paymentId: string) {
       );
 
       if (!preferenceResponse.ok) {
-        console.error("Failed to fetch preference info");
+        const errorText = await preferenceResponse.text();
+        console.error("Failed to fetch preference info:", {
+          status: preferenceResponse.status,
+          body: errorText,
+        });
+        // Continuar mesmo sem informações da preferência
       }
 
-      const preference = await preferenceResponse.json();
+      const preference = preferenceResponse.ok ? await preferenceResponse.json() : { items: [] };
+
+      console.log("Creating order with items:", preference.items);
 
       // Criar o pedido com as informações do pagamento
       const { data: newOrder, error: createError } = await supabase
@@ -168,6 +178,7 @@ async function processPaymentNotification(paymentId: string) {
         .single();
 
       if (createError) {
+        console.error("Supabase error creating order:", createError);
         throw new Error(`Failed to create order: ${createError.message}`);
       }
 

@@ -241,3 +241,37 @@ export const checkOrderStatus = async (
     return null;
   }
 };
+
+/**
+ * Função auxiliar para buscar pedido por preference_id sem usar createServerFn
+ * Usado internamente por outros serviços (como webhook-handler)
+ */
+export async function findOrderByPreferenceId(preferenceId: string): Promise<Order | null> {
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceRoleKey) {
+      console.error("Supabase credentials not configured for findOrderByPreferenceId");
+      return null;
+    }
+
+    const supabase = createClient(supabaseUrl, serviceRoleKey);
+
+    const { data: order, error } = await supabase
+      .from("Orders")
+      .select("*")
+      .eq("mp_preference_id", preferenceId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error fetching order by preference_id:", error);
+      return null;
+    }
+
+    return order;
+  } catch (error) {
+    console.error("Exception in findOrderByPreferenceId:", error);
+    return null;
+  }
+}
