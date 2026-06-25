@@ -62,6 +62,9 @@ export default function Countdown({ targetDate }: CountdownProps) {
         background: `linear-gradient(135deg, var(--color-wheat) 0%, var(--color-linen) 50%, var(--color-cream) 100%)`,
       }}
     >
+      {/* Divisor superior */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-forest/20 to-transparent"></div>
+
       <div className="absolute top-0 left-0 w-48 h-48 opacity-10">
         <OndaInferiorEsquerda />
       </div>
@@ -107,6 +110,9 @@ export default function Countdown({ targetDate }: CountdownProps) {
           </p>
         </div>
       </div>
+
+      {/* Divisor inferior */}
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-forest/20 to-transparent"></div>
     </Element>
   );
 }

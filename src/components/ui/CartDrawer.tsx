@@ -12,6 +12,7 @@ import {
 import { createPreference } from "../../services/mercadopago/create-preference";
 import { toastError } from "../../utils/toast";
 import { formatCurrency } from "../../lib/utils";
+import { Link } from "react-scroll";
 
 export function CartDrawer() {
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +25,16 @@ export function CartDrawer() {
     removeItem,
     clearCart,
   } = useCart();
+
+  const handleGoToProducts = () => {
+    closeCart();
+    setTimeout(() => {
+      const element = document.getElementById('products');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 100);
+  };
 
   const handleCheckout = async () => {
     if (isLoading) return;
@@ -95,7 +106,7 @@ export function CartDrawer() {
                   Não há produtos no carrinho
                 </p>
                 <button
-                  onClick={closeCart}
+                  onClick={handleGoToProducts}
                   className="bg-terracotta text-cream px-6 py-3 rounded-xl font-body font-semibold hover:bg-terracotta-dark transition-colors cursor-pointer text-sm sm:text-base"
                 >
                   Ver Lista de Presentes

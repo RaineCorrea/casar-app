@@ -68,31 +68,31 @@ function ProductCardComponent({
           />
         </div>
 
-        <div className="p-6">
+        <div className="p-4">
           <h3
             id={`product-${id}-name`}
-            className="font-display text-forest-dark text-xl mb-3 font-medium min-h-15 line-clamp-2"
+            className="font-display text-forest-dark text-lg mb-2 font-medium min-h-12 line-clamp-2"
           >
             {descricao}
           </h3>
 
-          <div className="flex items-center justify-between mb-4">
-            <p className="font-body text-terracotta text-2xl font-semibold">
+          <div className="flex items-center justify-between mb-3">
+            <p className="font-body text-terracotta text-xl font-semibold">
               {formatPrice(preco)}
             </p>
           </div>
 
           <Button
             onClick={handleAddToCart}
-            className="group/add w-full py-2.5 sm:py-3 px-3 sm:px-6 font-body text-center rounded-xl transition-all duration-300 bg-forest text-cream hover:bg-forest-dark hover:shadow-soft"
+            className="group/add w-full py-2 px-3 font-body text-center rounded-xl transition-all duration-300 bg-forest text-cream hover:bg-forest-dark hover:shadow-soft text-sm"
             aria-label={`Adicionar ${descricao} ao carrinho`}
           >
-            <span className="flex items-center justify-center gap-1.5 sm:gap-2">
-              <span className="text-sm sm:text-base truncate">
+            <span className="flex items-center justify-center gap-1.5">
+              <span className="truncate">
                 Adicionar ao Carrinho
               </span>
               <svg
-                className="w-4 h-4 sm:w-5 sm:h-5 shrink-0 group-hover/add:scale-110 transition-transform"
+                className="w-4 h-4 shrink-0 group-hover/add:scale-110 transition-transform"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"

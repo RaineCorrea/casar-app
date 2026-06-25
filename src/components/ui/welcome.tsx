@@ -79,7 +79,7 @@ export default function Welcome() {
         </div>
 
         <div
-          className="bg-cream/95 backdrop-blur-sm rounded-2xl p-10 md:p-14 shadow-lifted opacity-0 animate-fade-up"
+          className="bg-cream/95 backdrop-blur-sm rounded-2xl p-10 md:p-14 shadow-lifted opacity-0 animate-fade-up mb-10"
           style={{ animationDelay: "0.8s" }}
         >
           <h2 className="font-display text-forest text-3xl md:text-4xl mb-8 font-medium">
