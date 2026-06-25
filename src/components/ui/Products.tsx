@@ -27,7 +27,7 @@ const sortOptions: SortOption[] = [
 ];
 
 export default function Products() {
-  const [sortBy, setSortBy] = useState<ProductsSortBy>("descricao_asc");
+  const [sortBy, setSortBy] = useState<ProductsSortBy>("preco_desc");
   const { addItem } = useCart();
 
   const {
@@ -86,9 +86,11 @@ export default function Products() {
             aria-label="Ordenar produtos"
           >
             <SelectTrigger
-              className="px-4 py-2 rounded-xl border-2 border-forest/20 bg-cream text-forest font-body focus:outline-none focus:ring-2 focus:ring-forest/50 w-fit"
+              className="px-4 py-2 rounded-xl border-2 border-forest/20 bg-cream text-forest font-body focus:outline-none focus:ring-2 focus:ring-forest/50 w-fit cursor-pointer"
             >
-              <SelectValue placeholder="Ordenar por" />
+              <SelectValue placeholder="Ordenar por">
+                {sortOptions.find((option) => option.value === sortBy)?.label || "Ordenar por"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {sortOptions.map((option) => (
@@ -116,7 +118,7 @@ export default function Products() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {allProducts.map((product, index) => (
                 <ProductCard
                   key={product.id}

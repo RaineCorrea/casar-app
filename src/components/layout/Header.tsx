@@ -67,7 +67,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden lg:flex items-center gap-8">
           {navItems.map((item) => (
             <Link
               key={item.to}
@@ -107,7 +107,7 @@ export default function Header() {
 
         <button
           onClick={openCart}
-          className="hidden md:flex relative p-2 hover:bg-white/10 rounded-lg transition items-center justify-center cursor-pointer"
+          className="hidden lg:flex relative p-2 hover:bg-white/10 rounded-lg transition items-center justify-center cursor-pointer"
           aria-label="Ver carrinho de compras"
         >
           <IconeCarrinho
@@ -122,7 +122,7 @@ export default function Header() {
           )}
         </button>
 
-        <div className="md:hidden flex items-center gap-2">
+        <div className="lg:hidden flex items-center gap-2">
           <button
             className="flex flex-col items-center justify-center w-10 h-10 gap-1.5"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -172,7 +172,7 @@ export default function Header() {
       {/* Mobile Menu Dropdown */}
       <div
         id="mobile-menu"
-        className={`md:hidden absolute top-full left-0 right-0 transition-all duration-300 overflow-hidden ${
+        className={`lg:hidden absolute top-full left-0 right-0 transition-all duration-300 overflow-hidden ${
           mobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
         }`}
         style={
