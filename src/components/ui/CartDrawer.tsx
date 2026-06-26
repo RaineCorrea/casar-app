@@ -9,7 +9,7 @@ import {
   Sheet,
   SheetContent,
 } from "./sheet";
-import { createPreference } from "../../services/mercadopago/create-preference";
+import { createPreference, type CreatePreferenceResponse } from "../../services/mercadopago/create-preference";
 import { toastError } from "../../utils/toast";
 import { formatCurrency } from "../../lib/utils";
 import { Link } from "react-scroll";
@@ -46,9 +46,8 @@ export function CartDrawer() {
 
       const externalReference = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      const response = await createPreference({
-        data: {
-          items: items.map((item) => ({
+      const response: CreatePreferenceResponse = await createPreference({
+        items: items.map((item) => ({
             id: item.id,
             title: item.descricao || "Produto",
             quantity: item.quantity,
@@ -62,7 +61,6 @@ export function CartDrawer() {
             pending: `${origin}/checkout/pending`,
           },
           externalReference,
-        },
       });
 
       // Redirecionar para o Mercado Pago

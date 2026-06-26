@@ -16,7 +16,6 @@ import { Route as DefaultIndexRouteImport } from './routes/_default/index'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout.success'
 import { Route as CheckoutPendingRouteImport } from './routes/checkout.pending'
 import { Route as CheckoutFailureRouteImport } from './routes/checkout.failure'
-import { Route as ApiWebhooksMercadopagoRouteImport } from './routes/api.webhooks.mercadopago'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -52,11 +51,6 @@ const CheckoutFailureRoute = CheckoutFailureRouteImport.update({
   path: '/checkout/failure',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiWebhooksMercadopagoRoute = ApiWebhooksMercadopagoRouteImport.update({
-  id: '/api/webhooks/mercadopago',
-  path: '/api/webhooks/mercadopago',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof DefaultIndexRoute
@@ -65,7 +59,6 @@ export interface FileRoutesByFullPath {
   '/checkout/failure': typeof CheckoutFailureRoute
   '/checkout/pending': typeof CheckoutPendingRoute
   '/checkout/success': typeof CheckoutSuccessRoute
-  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
 }
 export interface FileRoutesByTo {
   '/lista2026': typeof Lista2026Route
@@ -74,7 +67,6 @@ export interface FileRoutesByTo {
   '/checkout/pending': typeof CheckoutPendingRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/': typeof DefaultIndexRoute
-  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -85,7 +77,6 @@ export interface FileRoutesById {
   '/checkout/pending': typeof CheckoutPendingRoute
   '/checkout/success': typeof CheckoutSuccessRoute
   '/_default/': typeof DefaultIndexRoute
-  '/api/webhooks/mercadopago': typeof ApiWebhooksMercadopagoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,7 +87,6 @@ export interface FileRouteTypes {
     | '/checkout/failure'
     | '/checkout/pending'
     | '/checkout/success'
-    | '/api/webhooks/mercadopago'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/lista2026'
@@ -105,7 +95,6 @@ export interface FileRouteTypes {
     | '/checkout/pending'
     | '/checkout/success'
     | '/'
-    | '/api/webhooks/mercadopago'
   id:
     | '__root__'
     | '/_default'
@@ -115,7 +104,6 @@ export interface FileRouteTypes {
     | '/checkout/pending'
     | '/checkout/success'
     | '/_default/'
-    | '/api/webhooks/mercadopago'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -125,7 +113,6 @@ export interface RootRouteChildren {
   CheckoutFailureRoute: typeof CheckoutFailureRoute
   CheckoutPendingRoute: typeof CheckoutPendingRoute
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
-  ApiWebhooksMercadopagoRoute: typeof ApiWebhooksMercadopagoRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -179,13 +166,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutFailureRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/webhooks/mercadopago': {
-      id: '/api/webhooks/mercadopago'
-      path: '/api/webhooks/mercadopago'
-      fullPath: '/api/webhooks/mercadopago'
-      preLoaderRoute: typeof ApiWebhooksMercadopagoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -207,17 +187,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutFailureRoute: CheckoutFailureRoute,
   CheckoutPendingRoute: CheckoutPendingRoute,
   CheckoutSuccessRoute: CheckoutSuccessRoute,
-  ApiWebhooksMercadopagoRoute: ApiWebhooksMercadopagoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}

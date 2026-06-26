@@ -1,114 +1,131 @@
-import { createServerFn } from "@tanstack/react-start";
-import { createClient } from "@supabase/supabase-js";
+import supabase from "./client";
+import { z } from "zod";
 
-function getServerSupabase() {
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const key = import.meta.env.VITE_SUPABASE_KEY;
+// Products
+export const ProductSchema = z.object({
+  id: z.number(),
+  descricao: z.string(),
+  preco: z.string(),
+  image: z.string(),
+  categoria: z.string(),
+  created_at: z.string().optional(),
+});
 
-  if (!url || !key) {
-    throw new Error("Supabase environment variables not configured");
-  }
+export type Product = z.infer<typeof ProductSchema>;
 
-  return createClient(url, key);
-}
+export const ProductsResponseSchema = z.object({
+  products: z.array(ProductSchema),
+  page: z.number(),
+  limit: z.number(),
+  hasMore: z.boolean(),
+  totalCount: z.number(),
+});
 
-export interface Product {
-  id: string;
-  image: string;
-  descricao?: string;
-  preco: number;
-  created_at: string;
-  link?: string;
-}
+export type ProductsResponse = z.infer<typeof ProductsResponseSchema>;
 
-export interface Guest {
-  id: string;
-  name: string;
-  email?: string;
-  telefone?: string;
-  created_at: string;
-}
+export type ProductsSortBy =
+  | "descricao_asc"
+  | "descricao_desc"
+  | "preco_asc"
+  | "preco_desc"
+  | "categoria_asc";
 
-export type ProductsSortBy = "preco_asc" | "preco_desc" | "descricao_asc";
-
-export interface ProductsParams {
+interface FetchProductsParams {
   page?: number;
   limit?: number;
   sortBy?: ProductsSortBy;
 }
 
-export interface ProductsResponse {
-  products: Product[];
-  page: number;
-  limit: number;
-  totalCount: number;
-  hasMore: boolean;
+async function fetchProducts(
+  params?: FetchProductsParams
+): Promise<ProductsResponse> {
+  const { page = 1, limit = 10, sortBy = "descricao_asc" } = params || {};
+
+  const [column, order] = sortBy.split("_") as [string, "asc" | "desc"];
+
+  const { data, error, count } = await supabase
+    .from("produtos")
+    .select("*", { count: "exact" })
+    .order(column, { ascending: order === "asc" })
+    .range((page - 1) * limit, page * limit - 1);
+
+  if (error) {
+    console.error("Error fetching products:", error);
+    throw new Error("Erro ao buscar produtos");
+  }
+
+  const totalCount = count || 0;
+  const hasMore = page * limit < totalCount;
+
+  return {
+    products: (data || []) as Product[],
+    page,
+    limit,
+    hasMore,
+    totalCount,
+  };
 }
 
-export const fetchProducts = createServerFn({ method: "GET" })
-  .inputValidator((params: ProductsParams = {}) => params)
-  .handler(async ({ data }) => {
-    const supabase = getServerSupabase();
-    const page = data?.page ?? 1;
-    const limit = data?.limit ?? 10;
-    const sortBy = data?.sortBy ?? "descricao_asc";
+// Guests
+export const GuestSchema = z.object({
+  id: z.number(),
+  nome: z.string(),
+  email: z.string().email("Email inválido").nullable().optional(),
+  telefone: z.string().nullable().optional(),
+  acompanhantes: z.number().default(0),
+  confirmado: z.boolean().default(false),
+  mensagem: z.string().nullable().optional(),
+  created_at: z.string().optional(),
+});
 
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
+export type Guest = z.infer<typeof GuestSchema>;
 
-    const [column, order] = sortBy.split("_");
-    const orderValue = order === "asc";
+interface FetchGuestsParams {
+  limit?: number;
+}
 
-    const query = supabase
-      .from("Products")
-      .select("*", { count: "exact" })
-      .range(from, to)
-      .order(column, { ascending: orderValue });
+interface FetchGuestsResponse {
+  guests: Guest[];
+  totalCount: number;
+}
 
-    const { data: products, error, count } = await query;
+async function fetchGuests(
+  params?: FetchGuestsParams
+): Promise<FetchGuestsResponse> {
+  const { data, error, count } = await supabase
+    .from("GuestList")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .limit(params?.limit || 100);
 
-    if (error) {
-      console.error("[fetchProducts] error:", error);
-      throw new Error(error.message);
-    }
+  if (error) {
+    console.error("Error fetching guests:", error);
+    throw new Error("Erro ao buscar convidados");
+  }
 
-    return {
-      products: (products || []) as Product[],
-      page,
-      limit,
-      totalCount: count || 0,
-      hasMore: (count || 0) > to + 1,
-    } as ProductsResponse;
-  });
+  return {
+    guests: (data || []) as Guest[],
+    totalCount: count || 0,
+  };
+}
 
-export const fetchGuests = createServerFn({ method: "GET" }).handler(
-  async () => {
-    const supabase = getServerSupabase();
-    const { data, error } = await supabase.from("GuestList").select("*");
+interface AddGuestParams {
+  data: Omit<Guest, "id" | "created_at">;
+}
 
-    if (error) {
-      throw new Error(error.message);
-    }
+async function addGuest(params: AddGuestParams): Promise<Guest> {
+  const { data, error } = await supabase
+    .from("GuestList")
+    .insert(params.data)
+    .select()
+    .single();
 
-    return data as Guest[];
-  },
-);
+  if (error) {
+    console.error("Error adding guest:", error);
+    throw new Error("Erro ao adicionar convidado");
+  }
 
-type NewGuest = { name: string; email?: string; telefone?: string };
+  return data as Guest;
+}
 
-export const addGuest = createServerFn({ method: "POST" })
-  .inputValidator((data: NewGuest) => data)
-  .handler(async ({ data }) => {
-    const supabase = getServerSupabase();
-    const { data: result, error } = await supabase
-      .from("GuestList")
-      .insert([data])
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    return result as Guest;
-  });
+export { fetchProducts, fetchGuests, addGuest };

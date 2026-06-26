@@ -1,4 +1,5 @@
 import { z } from "zod";
+import crypto from "crypto";
 
 const WebhookBodySchema = z.object({
   type: z.string().optional(),
@@ -75,7 +76,6 @@ function validateWebhookSignature(
     const manifest = `id=${body.data?.id || ""};ts=${timestamp};`;
 
     // Calculate HMAC SHA256
-    const crypto = require("crypto");
     const hmac = crypto.createHmac("sha256", webhookSecret);
     hmac.update(manifest);
     const calculatedHash = hmac.digest("hex");
@@ -99,7 +99,9 @@ function validateWebhookSignature(
 }
 
 // Processar e logar informações do pagamento
-async function processPaymentNotification(paymentId: string): Promise<ProcessPaymentResult> {
+async function processPaymentNotification(
+  paymentId: string
+): Promise<ProcessPaymentResult> {
   try {
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
 
@@ -127,7 +129,7 @@ async function processPaymentNotification(paymentId: string): Promise<ProcessPay
       return { success: false, error: "Failed to fetch payment info" };
     }
 
-    const payment: PaymentInfo = await response.json();
+    const payment: PaymentInfo = PaymentInfoSchema.parse(await response.json());
 
     // Logar informações completas do pagamento
     console.log("=== PAGAMENTO RECEBIDO (NÃO SALVO NO BANCO DE DADOS) ===");
@@ -145,10 +147,18 @@ async function processPaymentNotification(paymentId: string): Promise<ProcessPay
       console.log("=== DADOS DO PAGADOR ===");
       console.log("Email:", payment.payer.email);
       console.log("CPF:", payment.payer.identification?.number);
-      console.log("Telefone:", payment.payer.phone?.area_code && payment.payer.phone?.number
-        ? `${payment.payer.phone.area_code}${payment.payer.phone.number}`
-        : "N/A");
-      console.log("Nome:", [payment.payer.first_name, payment.payer.last_name].filter(Boolean).join(" ") || "N/A");
+      console.log(
+        "Telefone:",
+        payment.payer.phone?.area_code && payment.payer.phone?.number
+          ? `${payment.payer.phone.area_code}${payment.payer.phone.number}`
+          : "N/A"
+      );
+      console.log(
+        "Nome:",
+        [payment.payer.first_name, payment.payer.last_name]
+          .filter(Boolean)
+          .join(" ") || "N/A"
+      );
     }
 
     console.log("=== FIM DO LOG ===");
@@ -165,26 +175,24 @@ async function processPaymentNotification(paymentId: string): Promise<ProcessPay
   }
 }
 
-// Nitro server handler
-export default defineEventHandler(async (event) => {
+export default async function handler(req: Request) {
   console.log("=== WEBHOOK RECEBIDO ===");
 
   // Apenas responder a POST
-  if (event.method !== "POST") {
-    setResponseStatus(event, 405);
-    return {
-      success: false,
-      error: "Method not allowed",
-    };
+  if (req.method !== "POST") {
+    return new Response(
+      JSON.stringify({ success: false, error: "Method not allowed" }),
+      { status: 405, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   try {
-    const body = WebhookBodySchema.parse(await readBody(event));
-
+    const body = (await req.json()) as WebhookBody;
     console.log("Webhook body:", JSON.stringify(body, null, 2));
 
     // Validar assinatura do webhook
-    const signature = getHeader(event, "x-signature") || getHeader(event, "X-Signature");
+    const signature =
+      (req.headers.get("x-signature") || req.headers.get("X-Signature"));
     const webhookSecret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
 
     console.log("Signature header:", signature);
@@ -192,11 +200,13 @@ export default defineEventHandler(async (event) => {
 
     if (!webhookSecret) {
       console.error("MERCADO_PAGO_WEBHOOK_SECRET not configured");
-      setResponseStatus(event, 500);
-      return {
-        success: false,
-        error: "Webhook secret not configured",
-      };
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Webhook secret not configured",
+        }),
+        { status: 500, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     // Validar assinatura do webhook
@@ -207,11 +217,10 @@ export default defineEventHandler(async (event) => {
 
     if (!isValid) {
       console.warn("Assinatura inválida - rejeitando webhook");
-      setResponseStatus(event, 401);
-      return {
-        success: false,
-        error: "Invalid signature",
-      };
+      return new Response(
+        JSON.stringify({ success: false, error: "Invalid signature" }),
+        { status: 401, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     // Processar webhook
@@ -224,11 +233,10 @@ export default defineEventHandler(async (event) => {
 
     if (!type || !paymentId) {
       console.error("Missing webhook parameters");
-      setResponseStatus(event, 400);
-      return {
-        success: false,
-        error: "Missing parameters",
-      };
+      return new Response(
+        JSON.stringify({ success: false, error: "Missing parameters" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
     }
 
     if (type === "payment" || topic === "payment") {
@@ -236,21 +244,26 @@ export default defineEventHandler(async (event) => {
       const result = await processPaymentNotification(paymentId);
       console.log("Resultado:", result);
 
-      return result;
+      return new Response(JSON.stringify(result), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
     console.log("Webhook type not implemented:", type);
-    return {
-      success: true,
-      message: "Webhook received",
-    };
+    return new Response(
+      JSON.stringify({ success: true, message: "Webhook received" }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
   } catch (error) {
     console.error("Webhook error:", error);
 
-    setResponseStatus(event, 500);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
+    return new Response(
+      JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
   }
-});
+}

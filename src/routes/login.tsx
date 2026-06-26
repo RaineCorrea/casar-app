@@ -37,7 +37,7 @@ function AdminLogin() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: LoginFormData) => {
-      const result = await adminLogin({ data });
+      const result = await adminLogin(data);
       return result;
     },
     onSuccess: (result) => {
