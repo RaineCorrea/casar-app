@@ -1,10 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { adminLogin, validateAdminToken } from "../services/auth/admin";
-import { useEffect } from "react";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Nome de usuário é obrigatório"),
@@ -14,18 +13,19 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export const Route = createFileRoute("/login")({
+  beforeLoad: () => {
+    // Se já estiver autenticado, redirecionar para a lista
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("admin_token");
+      if (token && validateAdminToken(token)) {
+        throw redirect({ to: "/lista2026" });
+      }
+    }
+  },
   component: AdminLogin,
 });
 
 function AdminLogin() {
-  useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-
-    if (token && validateAdminToken(token)) {
-      window.location.href = "/lista2026";
-    }
-  }, []);
-
   const {
     register,
     handleSubmit,
@@ -43,6 +43,7 @@ function AdminLogin() {
     onSuccess: (result) => {
       if (result.success) {
         localStorage.setItem("admin_token", result.token);
+        // Navegação será tratada pelo beforeLoad na próxima renderização
         window.location.href = "/lista2026";
       } else {
         setError("root", {

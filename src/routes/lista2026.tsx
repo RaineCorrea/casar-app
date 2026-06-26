@@ -1,13 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   guestsQueryOptions,
   useGuestsWithRealtime,
 } from "../services/supabase/guests";
 import { validateAdminToken } from "../services/auth/admin";
-import { useEffect } from "react";
 import { IconeEmail, IconeTelefone } from "../components/icons";
 
 export const Route = createFileRoute("/lista2026")({
+  beforeLoad: () => {
+    // Verificar autenticação antes de carregar a rota
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("admin_token");
+      if (!token || !validateAdminToken(token)) {
+        throw redirect({ to: "/login" });
+      }
+    }
+  },
   loader: async ({ context }) => {
     await context.queryClient.ensureQueryData(guestsQueryOptions);
   },
@@ -16,14 +24,6 @@ export const Route = createFileRoute("/lista2026")({
 
 function Lista2026() {
   const { data: guests, isLoading, error } = useGuestsWithRealtime();
-
-  useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-
-    if (!token || !validateAdminToken(token)) {
-      window.location.href = "/login";
-    }
-  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("admin_token");
