@@ -20,4 +20,8 @@ export default defineConfig({
     port: 5173,
   },
   cacheDir: "C:\\Users\\raine\\.cache\\vite\\casar-app",
+  build: {
+    // Garantir que os caminhos dos assets estão corretos
+    target: "esnext",
+  },
 });
