@@ -96,12 +96,15 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   const { queryClient } = useRouteContext({ strict: false })
   return (
-    <QueryClientProvider client={queryClient!}>
-      <CartProvider>
-        <SkipLink />
-        <Outlet />
-      </CartProvider>
-    </QueryClientProvider>
+    <>
+      <QueryClientProvider client={queryClient!}>
+        <CartProvider>
+          <SkipLink />
+          <Outlet />
+        </CartProvider>
+      </QueryClientProvider>
+      <Scripts />
+    </>
   )
 }
 
