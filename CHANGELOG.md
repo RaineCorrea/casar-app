@@ -260,22 +260,26 @@ Arquivos desnecessários ignorados no deploy:
 | Lint errors | 0 ✅ |
 | Lint warnings | 0 ✅ |
 | TypeScript | Sem erros ✅ |
-| Build time | ~4.5s ✅ |
+| Build time | ~4s ✅ |
 | SEO | Rich snippets ✅ |
 | Formulários | Sem travamento ✅ |
-| Padrão nomes | PascalCase ✅ |
+| SPA Routing | Funcionando ✅ |
+| Lista de convidados | Exibindo corretamente ✅ |
+| Filtro de produtos | Funcionando ✅ |
+| Infinite scroll | Funcionando ✅ |
 
 ---
 
 ## 🚀 Deploy
 
 ### Status
-- ✅ **Pronto para deploy na Vercel**
-- ✅ **Rotas SPA configuradas**
-- ✅ **Rotas de API configuradas**
+- ✅ **Deploy na Vercel ativo**
+- ✅ **Rotas SPA configuradas e funcionando**
 - ✅ **SEO implementado**
 - ✅ **Travamento de formulários corrigido**
 - ✅ **Segurança headers ativos**
+- ✅ **Lista de convidados funcionando**
+- ✅ **Filtro e infinite scroll de produtos funcionando**
 
 ### Variáveis de Ambiente Necessárias
 ```bash
@@ -308,28 +312,56 @@ ADMIN_PASSWORD=
 
 ### Recent History (Git)
 ```
-6b5bd63 revert: restaurar input original com @base-ui/react
-fa19cf4 revert: restaurar guestSchema original
-f43794c fix(schema): simplificar validacoes do guestSchema
-0b766cb fix(input): trocar para input nativo em vez de @base-ui/react
-390eed4 fix(vite): remover manualChunks causando dependencias circulares
+3a7eefe fix: corrigir guestsList->guests e guestsListList->guestsList
+50ff8c9 fix: corrigir import que foi quebrado pelo replace-all
+64f8c2f fix: corrigir acesso aos dados de convidados e campo nome->nome
+473f452 debug: adicionar logs para investigar query de convidados
+2f4d4b5 fix(vercel): remover cleanUrls que interfere em SPA routing
+19efe0d fix: corrigir vercel.json para SPA e bug no fetchProducts
+d7a195a fix: corrigir erros de hidratação, chaves duplicadas e otimizar animações
 ```
 
-### Sessão Atual (2026-06-27) - Mudanças Não Commitadas Ainda
+### Sessão Atual (2026-06-27) - Mudanças Commitadas
 ```
-- Corrigido erro de hidratação: removido `<html>` e `<body>` do RootDocument
-- Corrigido erro de chaves duplicadas: removido verificação `!rootElement.innerHTML` do main.tsx
-- Corrigido erro de chaves duplicadas: adicionado deduplicação de produtos no Products.tsx
-- Acelerado animação do SVG "Rolar": 6s → 0.8s (7.5x mais rápido)
-- Adicionado `abort: true` em todos os `.refine()` do guestSchema
-- Adicionado `delayError: 500` nos formulários (InputForm, login)
-- Separado `setIsOpen` do `addItem` no CartContext (useEffect dedicado)
-- Simplificado dependências do `useMemo` no CartContext
-- Removido mode: "sync" do zodResolver (usa async padrão)
-- Alterado mode: "onSubmit" → "onBlur" nos formulários
-- Simplificado guestSchema (removido refinements redundantes)
-- Otimizado CartContext com useMemo
-- Removido manualChunks do vite.config.ts
+d7a195a fix: corrigir erros de hidratação, chaves duplicadas e otimizar animações
+1c45587 fix(vercel): remover padrao invalido de regex no vercel.json
+3c5a4fb fix(vercel): adicionar handle filesystem para SPA routes
+3741143 fix(vercel): listar rotas explicitamente ao inves de handle
+19efe0d fix: corrigir vercel.json para SPA e bug no fetchProducts
+2f4d4b5 fix(vercel): remover cleanUrls que interfere em SPA routing
+473f452 debug: adicionar logs para investigar query de convidados
+64f8c2f fix: corrigir acesso aos dados de convidados e campo nome->nome
+50ff8c9 fix: corrigir import que foi quebrado pelo replace-all
+3a7eefe fix: corrigir guestsList->guests e guestsListList->guestsList
 ```
+
+#### Detalhes das Correções
+
+**`vercel.json` - SPA Routing**
+- Removido `cleanUrls: true` que interferia nos rewrites
+- Configurado catch-all `"/(.*)"` → `"/index.html"` para rotas client-side
+- Removido padrão regex inválido `(?:...)` não suportado pela Vercel
+
+**`src/services/supabase/products.ts` - Infinite Scroll**
+- Corrigido bug: `fetchProducts({ data: params })` → `fetchProducts(params)`
+- Parâmetro era passado incorretamente dentro de objeto, causando erro na API
+
+**`src/components/ui/Products.tsx` - Lista de Produtos**
+- Adicionada deduplicação via `Map` para evitar chaves duplicadas
+- `uniqueProducts` garante IDs únicos no render
+
+**`src/routes/lista2026.tsx` - Lista de Convidados**
+- Corrigido acesso aos dados: `data.guests` em vez de `data` direto
+- Corrigido campo: `guest.nome` em vez de `guest.name`
+- `useQuery` retorna `{ data: { guests: [], totalCount }, ... }`
+
+**`src/routes/__root.tsx` - Hydration**
+- Removido `<html>` e `<body>` do `RootDocument` (já estão no index.html)
+
+**`src/main.tsx` - React Root**
+- Removido `if (!rootElement.innerHTML)` que causava problemas com hot reload
+
+**`src/index.css` - Animações**
+- Acelerado `animate-float`: 6s → 0.8s (7.5x mais rápido)
 
 **Nota**: A combinação de `mode: "sync"` + schema complexo com muitos `.refine()` era a verdadeira causa do travamento. Referência: [How Zod's .refine() Can Cause a Denial of Service](https://medium.com/@imranmsa93/the-hidden-struggles-of-react-forms-and-smarter-ways-to-handle-them-in-2025-dff6267650e1)
