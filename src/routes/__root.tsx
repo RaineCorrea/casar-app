@@ -10,6 +10,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { CartProvider } from '../components/contexts/CartContext'
 import { SkipLink } from '../components/ui/SkipLink'
+import { StructuredData } from '../components/SEO/StructuredData'
 import '../index.css'
 
 export const Route = createRootRouteWithContext<{
@@ -109,16 +110,13 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html lang="pt-BR">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <SkipLink />
-        {children}
-        <Scripts />
-      </body>
-    </html>
+    <>
+      <HeadContent />
+      <StructuredData />
+      <SkipLink />
+      {children}
+      <Scripts />
+    </>
   )
 }
 

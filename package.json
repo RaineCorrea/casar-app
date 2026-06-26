@@ -45,7 +45,7 @@
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@types/react-scroll": "^1.8.10",
-    "@vercel/node": "^4.0.0",
+    "@vercel/node": "^5.8.21",
     "@vitejs/plugin-react-swc": "^4.2.2",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "7.1.1",

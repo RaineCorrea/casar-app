@@ -2,14 +2,14 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import crypto from 'crypto';
 import { z } from 'zod';
 
-const WebhookBodySchema = z.object({
-  type: z.string().optional(),
-  data_id: z.string().optional(),
-  topic: z.string().optional(),
-  data: z.object({
-    id: z.string().optional(),
-  }).optional(),
-});
+type WebhookBody = {
+  type?: string;
+  data_id?: string;
+  topic?: string;
+  data?: {
+    id?: string;
+  };
+};
 
 const PaymentInfoSchema = z.object({
   id: z.string(),
@@ -37,7 +37,6 @@ const PaymentInfoSchema = z.object({
   }).optional(),
 });
 
-type WebhookBody = z.infer<typeof WebhookBodySchema>;
 type PaymentInfo = z.infer<typeof PaymentInfoSchema>;
 
 interface ProcessPaymentResult {

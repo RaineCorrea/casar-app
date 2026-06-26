@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { guestSchema, type GuestFormData } from "../../schemas/guestSchema";
 import { toastError, toastSuccess } from "../../utils/toast";
 import { Element } from "react-scroll";
-import { Input } from "./input";
 import { Label } from "./label";
 import { Button } from "./button";
 import {
@@ -29,6 +28,8 @@ export default function InputForm() {
     formState: { errors },
   } = useForm<GuestFormData>({
     resolver: zodResolver(guestSchema),
+    mode: "onBlur",
+    delayError: 500,
   });
 
   const addGuest = useAddGuest();
@@ -109,7 +110,7 @@ export default function InputForm() {
                 Nome Completo
               </Label>
               <div className="relative">
-                <Input
+                <input
                   id="name"
                   type="text"
                   autoComplete="name"
@@ -143,7 +144,7 @@ export default function InputForm() {
                 Telefone
               </Label>
               <div className="relative">
-                <Input
+                <input
                   id="telefone"
                   type="tel"
                   inputMode="tel"
@@ -180,7 +181,7 @@ export default function InputForm() {
                 E-mail
               </Label>
               <div className="relative">
-                <Input
+                <input
                   id="email"
                   type="email"
                   autoComplete="email"

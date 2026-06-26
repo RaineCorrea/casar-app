@@ -23,90 +23,44 @@ export const guestSchema = z
       .trim()
       .min(3, "O nome deve ter no mínimo 3 caracteres")
       .max(100, "O nome deve ter no máximo 100 caracteres")
-      .regex(
-        /^[a-zA-ZÀ-ÿ\s]+$/,
-        "O nome deve conter apenas letras e espaços"
-      )
-      .refine(
-        (name) => {
-          const names = name.trim().split(/\s+/);
-          return names.length >= 2;
-        },
-        { message: "Digite nome completo (nome e sobrenome)" }
-      )
-      .refine(
-        (name) => {
-          const names = name.trim().split(/\s+/);
-          return names.every((n) => n.length >= 2);
-        },
-        { message: "Cada nome deve ter no mínimo 2 letras" }
-      ),
+      .regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Apenas letras e espaços")
+      .refine((val) => val.trim().split(/\s+/).length >= 2, {
+        message: "Digite nome completo (nome e sobrenome)",
+        abort: true,
+      }),
 
     telefone: z
       .string()
       .min(1, "O telefone é obrigatório")
-      .trim()
       .transform((val) => val.replace(/\D/g, ""))
-      .refine(
-        (val) => val.length >= 10 && val.length <= 11,
-        "O telefone deve ter 10 ou 11 dígitos"
-      )
-      .refine(
-        (val) => {
-          const ddd = parseInt(val.substring(0, 2));
-          return VALID_DDDS.includes(ddd);
-        },
-        { message: "DDD inválido" }
-      )
-      .refine(
-        (val) => {
-          return !/^(.)\1+$/.test(val);
-        },
-        { message: "Telefone inválido" }
-      ),
+      .refine((val) => val.length >= 10 && val.length <= 11, {
+        message: "O telefone deve ter 10 ou 11 dígitos",
+        abort: true,
+      })
+      .refine((val) => {
+        const ddd = parseInt(val.substring(0, 2));
+        return VALID_DDDS.includes(ddd);
+      }, { message: "DDD inválido", abort: true })
+      .refine((val) => !/^(.)\1+$/.test(val), {
+        message: "Telefone inválido",
+        abort: true,
+      }),
 
     email: z
       .string()
       .min(1, "O e-mail é obrigatório")
       .trim()
       .toLowerCase()
-      .email("Formato de e-mail inválido")
-      .max(254, "O e-mail deve ter no máximo 254 caracteres")
-      .refine(
-        (email) => {
-          return !/\s/.test(email);
-        },
-        { message: "O e-mail não pode conter espaços" }
-      )
-      .refine(
-        (email) => {
-          const parts = email.split("@");
-          return parts.length === 2 && parts[1].includes(".");
-        },
-        { message: "E-mail inválido" }
-      )
-      .refine(
-        (email) => {
-          const domain = email.split("@")[1];
-          return domain && domain.length >= 2 && domain.includes(".");
-        },
-        { message: "Domínio de e-mail inválido" }
-      )
-      .refine(
-        (email) => {
-          return !/[<>|,;"'\\]/.test(email);
-        },
-        { message: "O e-mail contém caracteres inválidos" }
-      ),
+      .email("E-mail inválido")
+      .max(254, "E-mail muito longo")
+      .refine((val) => !/[<>|,;"'\\]/.test(val), {
+        message: "E-mail contém caracteres inválidos",
+        abort: true,
+      }),
   })
-  .refine(
-    (data) => {
-      return data.name.length > 0 && data.telefone.length > 0 && data.email.length > 0;
-    },
-    {
-      message: "Todos os campos são obrigatórios",
-      path: ["name"],
-    }
-  );
+  .refine((data) => data.name && data.telefone && data.email, {
+    message: "Todos os campos são obrigatórios",
+    path: ["name"],
+  });
 
 export type GuestFormData = z.infer<typeof guestSchema>;

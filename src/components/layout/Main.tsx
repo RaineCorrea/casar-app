@@ -1,8 +1,8 @@
 import Countdown from "../ui/Countdown";
-import InputForm from "../ui/inputForm";
+import InputForm from "../ui/InputForm";
 import Location from "../ui/Location";
 import Products from "../ui/Products";
-import Welcome from "../ui/welcome";
+import Welcome from "../ui/Welcome";
 import { CartDrawer } from "../ui/CartDrawer";
 
 export function Main() {

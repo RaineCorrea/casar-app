@@ -15,6 +15,7 @@ export default function Header() {
 
   // Hydration mismatch fix: badge do carrinho só renderiza no cliente
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Necessário para evitar hydration mismatch
     setMounted(true);
   }, []);
 

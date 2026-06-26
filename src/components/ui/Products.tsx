@@ -42,6 +42,11 @@ export default function Products() {
   const allProducts = data?.pages.flatMap((page) => page.products) ?? [];
   const totalCount = data?.pages[0]?.totalCount ?? 0;
 
+  // Deduplicar produtos por ID para evitar erros de chaves duplicadas
+  const uniqueProducts = Array.from(
+    new Map(allProducts.map((p) => [p.id, p])).values()
+  );
+
   const handleAddToCart = (product: {
     id: string;
     image: string;
@@ -110,7 +115,7 @@ export default function Products() {
               {error.message}
             </p>
           </div>
-        ) : allProducts.length === 0 ? (
+        ) : uniqueProducts.length === 0 ? (
           <div className="text-center py-20 bg-cream/80 rounded-3xl">
             <p className="text-forest-dark font-body text-lg">
               Nenhum produto disponível no momento.
@@ -119,7 +124,7 @@ export default function Products() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {allProducts.map((product, index) => (
+              {uniqueProducts.map((product, index) => (
                 <ProductCard
                   key={product.id}
                   id={product.id}
@@ -170,7 +175,7 @@ export default function Products() {
                 </Button>
 
                 <p className="mt-4 text-forest/70 font-body text-sm">
-                  Mostrando {allProducts.length} de {totalCount} produtos
+                  Mostrando {uniqueProducts.length} de {totalCount} produtos
                 </p>
               </div>
             )}

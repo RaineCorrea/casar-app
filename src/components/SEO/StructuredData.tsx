@@ -1,107 +1,122 @@
-/**
- * Structured Data (JSON-LD) para SEO
- * Ajoca mecanismos de busca a entender melhor o conteúdo
- */
+import { useEffect } from "react";
 
-interface WeddingEventProps {
+interface WebSiteSchema {
+  "@context": string;
+  "@type": string;
+  name: string;
+  url: string;
+  description: string;
+  potentialAction: {
+    "@type": string;
+    target: string;
+    "query-input": string;
+  };
+}
+
+interface EventSchema {
+  "@context": string;
+  "@type": string;
   name: string;
   startDate: string;
-  location: string;
+  endDate: string;
+  location: {
+    "@type": string;
+    name: string;
+    address: {
+      "@type": string;
+      addressLocality: string;
+      addressRegion: string;
+      addressCountry: string;
+    };
+  };
   description: string;
-  url: string;
+  image: string[];
+  organizer: {
+    "@type": string;
+    name: string;
+  };
+  attendee: {
+    "@type": string;
+    name: string;
+  }[];
 }
 
-export function WeddingEventStructuredData({
-  name,
-  startDate,
-  location,
-  description,
-  url,
-}: WeddingEventProps) {
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Event',
-    name,
-    startDate,
+export function StructuredData() {
+  const baseUrl = typeof window !== "undefined"
+    ? window.location.origin
+    : "https://casar-app.vercel.app";
+
+  const websiteSchema: WebSiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Matheus & Nicolly - Nosso Casamento",
+    url: baseUrl,
+    description:
+      "Confirme sua presença e escolha presentes para o casamento de Matheus & Nicolly - 18 de Novembro de 2026",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${baseUrl}/?search={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const eventSchema: EventSchema = {
+    "@context": "https://schema.org",
+    "@type": "Wedding",
+    name: "Casamento de Matheus & Nicolly",
+    startDate: "2026-11-18T16:00:00-03:00",
+    endDate: "2026-11-18T23:59:59-03:00",
     location: {
-      '@type': 'Place',
-      name: location,
+      "@type": "Place",
+      name: "Local do Casamento",
       address: {
-        '@type': 'PostalAddress',
-        addressCountry: 'BR',
+        "@type": "PostalAddress",
+        addressLocality: "São Paulo",
+        addressRegion: "SP",
+        addressCountry: "BR",
       },
     },
-    description,
-    url,
+    description:
+      "Será um grande prazer contar com sua presença em nosso dia especial. 18 de Novembro de 2026, às 16h.",
+    image: [
+      `${baseUrl}/og-image.jpg`,
+      `${baseUrl}/wedding-photo-1.jpg`,
+      `${baseUrl}/wedding-photo-2.jpg`,
+    ],
     organizer: {
-      '@type': 'Person',
-      name: 'Matheus & Nicolly',
+      "@type": "Organization",
+      name: "Matheus & Nicolly",
     },
-    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
-    eventStatus: 'https://schema.org/EventScheduled',
+    attendee: [
+      { "@type": "Person", name: "Convidados" },
+      { "@type": "Person", name: "Família" },
+      { "@type": "Person", name: "Amigos" },
+    ],
   };
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(structuredData),
-      }}
-    />
-  );
-}
+  useEffect(() => {
+    // WebSite Schema
+    const websiteScript = document.createElement("script");
+    websiteScript.type = "application/ld+json";
+    websiteScript.id = "structured-data-website";
+    websiteScript.text = JSON.stringify(websiteSchema);
+    document.head.appendChild(websiteScript);
 
-interface WebSiteProps {
-  name: string;
-  url: string;
-  description: string;
-}
+    // Event Schema
+    const eventScript = document.createElement("script");
+    eventScript.type = "application/ld+json";
+    eventScript.id = "structured-data-event";
+    eventScript.text = JSON.stringify(eventSchema);
+    document.head.appendChild(eventScript);
 
-export function WebSiteStructuredData({ name, url, description }: WebSiteProps) {
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name,
-    url,
-    description,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: `${url}/?search={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
-  };
+    return () => {
+      const existingWebsite = document.getElementById("structured-data-website");
+      const existingEvent = document.getElementById("structured-data-event");
+      if (existingWebsite) existingWebsite.remove();
+      if (existingEvent) existingEvent.remove();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Schemas are static and should not trigger re-effect
+  }, []);
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(structuredData),
-      }}
-    />
-  );
-}
-
-interface OrganizationProps {
-  name: string;
-  url: string;
-  logo?: string;
-}
-
-export function OrganizationStructuredData({ name, url, logo }: OrganizationProps) {
-  const structuredData = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name,
-    url,
-    logo,
-  };
-
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(structuredData),
-      }}
-    />
-  );
+  return null;
 }

@@ -43,7 +43,7 @@ export function CartDrawer() {
     try {
       const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:5173';
 
-      const externalReference = `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const externalReference = `ORDER_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
 
       const response: CreatePreferenceResponse = await createPreference({
         items: items.map((item) => ({

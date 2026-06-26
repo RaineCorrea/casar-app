@@ -19,6 +19,10 @@ interface AdminToken {
   expiresAt: number;
 }
 
+// NOTA DE SEGURANÇA: A validação de token atual usa Base64 que é facilmente decodificável.
+// Para produção, considere usar JWT assinado pelo servidor ou validar tokens em cada requisição ao backend.
+// Isso serve como uma camada básica de obscuridade, não deve ser usado para dados sensáveis.
+
 export async function adminLogin(data: LoginInput): Promise<LoginSuccess | LoginError> {
   const response = await fetch("/api/admin/login", {
     method: "POST",

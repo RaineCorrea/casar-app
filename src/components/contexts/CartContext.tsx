@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 
 interface CartItem {
   id: string;
@@ -46,10 +46,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
 
-      if (prev.length === 0) {
-        setIsOpen(true);
-      }
-
       if (existing) {
         return prev.map((item) =>
           item.id === product.id
@@ -60,6 +56,13 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
       return [...prev, { ...product, quantity: 1 }];
     });
   }, []);
+
+  // Abrir carrinho automaticamente quando primeiro item é adicionado
+  useEffect(() => {
+    if (items.length === 1) {
+      setIsOpen(true);
+    }
+  }, [items.length]);
 
   const removeItem = useCallback((id: string) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
@@ -76,30 +79,32 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
     setItems([]);
   }, []);
 
-  const total = items.reduce(
-    (sum, item) => sum + item.preco * item.quantity,
-    0,
+  const total = useMemo(
+    () => items.reduce((sum, item) => sum + item.preco * item.quantity, 0),
+    [items],
   );
-  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const itemCount = useMemo(
+    () => items.reduce((sum, item) => sum + item.quantity, 0),
+    [items],
+  );
 
-  return (
-    <CartContext.Provider
-      value={{
-        items,
-        total,
-        itemCount,
-        isOpen,
-        openCart,
-        closeCart,
-        addItem,
-        removeItem,
-        updateQuantity,
-        clearCart,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+  const value = useMemo(
+    () => ({
+      items,
+      total,
+      itemCount,
+      isOpen,
+      openCart,
+      closeCart,
+      addItem,
+      removeItem,
+      updateQuantity,
+      clearCart,
+    }),
+    [items, total, itemCount, isOpen],
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
 
 export const useCart = () => {

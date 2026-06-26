@@ -32,9 +32,8 @@ function AdminLogin() {
     formState: { errors },
     setError,
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    mode: "onBlur",
-    delayError: 500,
+    resolver: zodResolver(loginSchema, undefined, { mode: "sync" }),
+    mode: "onSubmit",
   });
 
   const loginMutation = useMutation({
