@@ -142,24 +142,3 @@ function NotFound() {
     </div>
   )
 }
-
-function NotFound() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-wheat/30 px-6" role="main" aria-labelledby="notfound-title">
-      <div className="text-center">
-        <h1 id="notfound-title" className="font-display text-forest text-6xl md:text-8xl mb-6 font-medium">
-          404
-        </h1>
-        <p className="font-body text-forest-dark/80 text-xl md:text-2xl mb-8 max-w-md mx-auto">
-          Página não encontrada
-        </p>
-        <a
-          href="/"
-          className="inline-block px-8 py-3 bg-forest text-cream font-body text-lg rounded-xl hover:bg-forest-dark transition-colors duration-300 hover:shadow-soft focus:outline-none focus:ring-2 focus:ring-forest focus:ring-offset-2"
-        >
-          Voltar ao Início
-        </a>
-      </div>
-    </div>
-  )
-}
