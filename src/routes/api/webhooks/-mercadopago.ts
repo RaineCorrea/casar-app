@@ -1,40 +1,42 @@
-import { Handler } from "@netlify/functions";
-import crypto from "crypto";
+import { z } from "zod";
 
-interface WebhookBody {
-  type?: string;
-  data_id?: string;
-  topic?: string;
-  data?: {
-    id?: string;
-  };
-}
+const WebhookBodySchema = z.object({
+  type: z.string().optional(),
+  data_id: z.string().optional(),
+  topic: z.string().optional(),
+  data: z.object({
+    id: z.string().optional(),
+  }).optional(),
+});
 
-interface PaymentInfo {
-  id: string;
-  status: string;
-  external_reference: string;
-  preference_id?: string;
-  payment_method_id: string;
-  payment_type_id: string;
-  date_created: string;
-  date_approved?: string;
-  transaction_amount: number;
-  installments: number;
-  payer?: {
-    email?: string;
-    identification?: {
-      type?: string;
-      number?: string;
-    };
-    phone?: {
-      area_code?: string;
-      number?: string;
-    };
-    first_name?: string;
-    last_name?: string;
-  };
-}
+const PaymentInfoSchema = z.object({
+  id: z.string(),
+  status: z.string(),
+  external_reference: z.string().optional(),
+  preference_id: z.string().optional(),
+  payment_method_id: z.string(),
+  payment_type_id: z.string(),
+  date_created: z.string(),
+  date_approved: z.string().optional(),
+  transaction_amount: z.number(),
+  installments: z.number(),
+  payer: z.object({
+    email: z.string().optional(),
+    identification: z.object({
+      type: z.string().optional(),
+      number: z.string().optional(),
+    }).optional(),
+    phone: z.object({
+      area_code: z.string().optional(),
+      number: z.string().optional(),
+    }).optional(),
+    first_name: z.string().optional(),
+    last_name: z.string().optional(),
+  }).optional(),
+});
+
+type WebhookBody = z.infer<typeof WebhookBodySchema>;
+type PaymentInfo = z.infer<typeof PaymentInfoSchema>;
 
 interface ProcessPaymentResult {
   success: boolean;
@@ -73,6 +75,7 @@ function validateWebhookSignature(
     const manifest = `id=${body.data?.id || ""};ts=${timestamp};`;
 
     // Calculate HMAC SHA256
+    const crypto = require("crypto");
     const hmac = crypto.createHmac("sha256", webhookSecret);
     hmac.update(manifest);
     const calculatedHash = hmac.digest("hex");
@@ -162,27 +165,26 @@ async function processPaymentNotification(paymentId: string): Promise<ProcessPay
   }
 }
 
-const handler: Handler = async (event) => {
+// Nitro server handler
+export default defineEventHandler(async (event) => {
   console.log("=== WEBHOOK RECEBIDO ===");
 
   // Apenas responder a POST
-  if (event.httpMethod !== "POST") {
+  if (event.method !== "POST") {
+    setResponseStatus(event, 405);
     return {
-      statusCode: 405,
-      body: JSON.stringify({ error: "Method not allowed" }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      success: false,
+      error: "Method not allowed",
     };
   }
 
   try {
-    const body: WebhookBody = JSON.parse(event.body || "{}");
+    const body = WebhookBodySchema.parse(await readBody(event));
 
     console.log("Webhook body:", JSON.stringify(body, null, 2));
 
     // Validar assinatura do webhook
-    const signature = event.headers["x-signature"] || event.headers["X-Signature"];
+    const signature = getHeader(event, "x-signature") || getHeader(event, "X-Signature");
     const webhookSecret = process.env.MERCADO_PAGO_WEBHOOK_SECRET;
 
     console.log("Signature header:", signature);
@@ -190,15 +192,10 @@ const handler: Handler = async (event) => {
 
     if (!webhookSecret) {
       console.error("MERCADO_PAGO_WEBHOOK_SECRET not configured");
+      setResponseStatus(event, 500);
       return {
-        statusCode: 500,
-        body: JSON.stringify({
-          success: false,
-          error: "Webhook secret not configured",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        success: false,
+        error: "Webhook secret not configured",
       };
     }
 
@@ -210,15 +207,10 @@ const handler: Handler = async (event) => {
 
     if (!isValid) {
       console.warn("Assinatura inválida - rejeitando webhook");
+      setResponseStatus(event, 401);
       return {
-        statusCode: 401,
-        body: JSON.stringify({
-          success: false,
-          error: "Invalid signature",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        success: false,
+        error: "Invalid signature",
       };
     }
 
@@ -232,15 +224,10 @@ const handler: Handler = async (event) => {
 
     if (!type || !paymentId) {
       console.error("Missing webhook parameters");
+      setResponseStatus(event, 400);
       return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-          error: "Missing parameters",
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
+        success: false,
+        error: "Missing parameters",
       };
     }
 
@@ -249,40 +236,21 @@ const handler: Handler = async (event) => {
       const result = await processPaymentNotification(paymentId);
       console.log("Resultado:", result);
 
-      return {
-        statusCode: 200,
-        body: JSON.stringify(result),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
+      return result;
     }
 
     console.log("Webhook type not implemented:", type);
     return {
-      statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        message: "Webhook received",
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      success: true,
+      message: "Webhook received",
     };
   } catch (error) {
     console.error("Webhook error:", error);
 
+    setResponseStatus(event, 500);
     return {
-      statusCode: 500,
-      body: JSON.stringify({
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
-};
-
-export { handler };
+});

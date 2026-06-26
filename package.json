@@ -15,7 +15,7 @@
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@hookform/resolvers": "^5.2.2",
-    "@supabase/supabase-js": "^2.93.3",
+        "@supabase/supabase-js": "^2.93.3",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.20",
     "@tanstack/react-router": "^1.157.18",
@@ -24,6 +24,7 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.21.0",
     "next-themes": "^0.4.6",
+    "nitro": "^3.0.260610-beta",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.71.1",
@@ -33,13 +34,11 @@
     "tailwindcss": "^4.1.18",
     "tailwindcss-animate": "^1.0.7",
     "vite-tsconfig-paths": "^6.0.5",
-    "zod": "^4.3.6",
-    "@netlify/functions": "^2.8.0"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",
-    "@netlify/vite-plugin-tanstack-start": "^1.2.9",
-    "@tanstack/router-plugin": "^1.157.18",
+        "@tanstack/router-plugin": "^1.157.18",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

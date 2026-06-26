@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.output
 *.local
 
 # Editor directories and files
@@ -23,5 +24,7 @@ dist-ssr
 *.sln
 *.sw?
 .env
-# Local Netlify folder
+
+# Platform folders
 .netlify
+.vercel

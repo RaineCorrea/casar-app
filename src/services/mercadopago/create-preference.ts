@@ -68,7 +68,7 @@ export const createPreference = createServerFn({ method: "POST" })
       items: normalizedItems,
       back_urls: backUrls,
       external_reference: reference,
-      notification_url: `${origin}/.netlify/functions/mercadopago-webhook`,
+      notification_url: `${origin}/api/webhooks/mercadopago`,
       auto_return: "approved",
       binary_mode: true,
       statement_descriptor: "MATHEUSNICOLLY",
