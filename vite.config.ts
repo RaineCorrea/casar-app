@@ -7,7 +7,15 @@ import { nitro } from "nitro/vite";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [tsConfigPaths(), tanstackStart(), nitro(), react(), tailwindcss()],
+  plugins: [
+    tsConfigPaths(),
+    tanstackStart(),
+    nitro({
+      preset: "vercel",
+    }),
+    react(),
+    tailwindcss(),
+  ],
   server: {
     port: 5173,
   },
