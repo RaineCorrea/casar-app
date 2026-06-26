@@ -20,12 +20,11 @@ export function useProductsInfinite(sortBy: ProductsSortBy = "descricao_asc") {
   return useInfiniteQuery({
     queryKey: ["products", "infinite", sortBy],
     queryFn: ({ pageParam }: { pageParam?: number }) => {
-      const params = {
+      return fetchProducts({
         page: pageParam || 1,
         limit: 10,
         sortBy,
-      };
-      return fetchProducts({ data: params });
+      });
     },
     getNextPageParam: (lastPage) => {
       return lastPage.hasMore ? lastPage.page + 1 : undefined;
