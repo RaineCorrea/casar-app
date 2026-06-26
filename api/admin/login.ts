@@ -1,3 +1,5 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
 interface LoginInput {
   username: string;
   password: string;
@@ -81,27 +83,25 @@ function resetAttempts(identifier: string): void {
   loginAttempts.delete(identifier);
 }
 
-export default async function handler(req: Request) {
-  // Adicionar headers CORS
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
-  if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+  if (req.method !== 'POST') {
+    return res.status(405).json({
+      success: false,
+      error: 'Method not allowed'
+    } as LoginError);
   }
 
   try {
-    const { username, password }: LoginInput = await req.json();
+    const { username, password }: LoginInput = req.body;
 
     // Identificador para rate limiting (baseado em IP e username)
     const identifier = `${username}`;
@@ -109,27 +109,21 @@ export default async function handler(req: Request) {
     // Verificar rate limit
     const rateLimitCheck = checkRateLimit(identifier);
     if (!rateLimitCheck.allowed) {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: rateLimitCheck.error || "Muitas tentativas. Tente novamente mais tarde.",
-        } as LoginError),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return res.status(429).json({
+        success: false,
+        error: rateLimitCheck.error || 'Muitas tentativas. Tente novamente mais tarde.',
+      } as LoginError);
     }
 
     const adminUsername = process.env.ADMIN_USERNAME;
     const adminPassword = process.env.ADMIN_PASSWORD;
 
     if (!adminUsername || !adminPassword) {
-      console.error("Credenciais admin não configuradas");
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: "Credenciais admin não configuradas no servidor",
-        } as LoginError),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      console.error('Credenciais admin não configuradas');
+      return res.status(500).json({
+        success: false,
+        error: 'Credenciais admin não configuradas no servidor',
+      } as LoginError);
     }
 
     if (username === adminUsername && password === adminPassword) {
@@ -142,36 +136,27 @@ export default async function handler(req: Request) {
         expiresAt: Date.now() + 24 * 60 * 60 * 1000,
       };
 
-      const token = Buffer.from(JSON.stringify(tokenData)).toString("base64");
+      const token = Buffer.from(JSON.stringify(tokenData)).toString('base64');
 
-      return new Response(
-        JSON.stringify({
-          success: true,
-          token,
-        } as LoginSuccess),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return res.status(200).json({
+        success: true,
+        token,
+      } as LoginSuccess);
     }
 
     // Registrar tentativa falha
     recordFailedAttempt(identifier);
 
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "Credenciais inválidas",
-      } as LoginError),
-      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return res.status(401).json({
+      success: false,
+      error: 'Credenciais inválidas',
+    } as LoginError);
   } catch (error) {
-    console.error("Login error:", error);
+    console.error('Login error:', error);
 
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: "Erro interno do servidor",
-      } as LoginError),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return res.status(500).json({
+      success: false,
+      error: 'Erro interno do servidor',
+    } as LoginError);
   }
 }

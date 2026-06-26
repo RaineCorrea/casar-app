@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import {
   Outlet,
   createRootRouteWithContext,
@@ -97,30 +96,12 @@ export const Route = createRootRouteWithContext<{
 function RootComponent() {
   const { queryClient } = useRouteContext({ strict: false })
   return (
-    <RootDocument>
-      <QueryClientProvider client={queryClient!}>
-        <CartProvider>
-          <Outlet />
-        </CartProvider>
-      </QueryClientProvider>
-    </RootDocument>
-  )
-}
-
-function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
-  return (
-    <html lang="pt-BR">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
+    <QueryClientProvider client={queryClient!}>
+      <CartProvider>
         <SkipLink />
-        <div id="main-content" tabIndex={-1}>
-          {children}
-        </div>
-        <Scripts />
-      </body>
-    </html>
+        <Outlet />
+      </CartProvider>
+    </QueryClientProvider>
   )
 }
 

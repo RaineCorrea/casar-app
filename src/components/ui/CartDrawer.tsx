@@ -12,7 +12,6 @@ import {
 import { createPreference, type CreatePreferenceResponse } from "../../services/mercadopago/create-preference";
 import { toastError } from "../../utils/toast";
 import { formatCurrency } from "../../lib/utils";
-import { Link } from "react-scroll";
 
 export function CartDrawer() {
   const [isLoading, setIsLoading] = useState(false);

@@ -28,4 +28,3 @@ export { IconeX } from "./IconeX";
 export { IconeCarrinho } from "./IconeCarrinho";
 export { IconeCarrinhoVazio } from "./IconeCarrinhoVazio";
 export { IconeLixeira } from "./IconeLixeira";
-export { IconeWhatsApp } from "./IconeWhatsApp";

@@ -1,4 +1,5 @@
-import { z } from "zod";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { z } from 'zod';
 
 const PreferenceItemSchema = z.object({
   id: z.union([z.string(), z.number()]),
@@ -38,44 +39,40 @@ const CreatePreferenceSchema = z.object({
   externalReference: z.string().optional(),
 });
 
-export default async function handler(req: Request) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Adicionar headers CORS
-  const corsHeaders = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
   }
 
-  if (req.method !== "POST") {
-    return new Response(
-      JSON.stringify({ error: "Method not allowed" }),
-      { status: 405, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const body = await req.json();
+    const body = req.body;
     const validatedData = CreatePreferenceSchema.parse(body);
     const { items, backUrls, payer, externalReference } = validatedData;
 
     const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN;
 
     if (!accessToken) {
-      console.error("MERCADO_PAGO_ACCESS_TOKEN not configured");
-      throw new Error("Credenciais do Mercado Pago não configuradas");
+      console.error('MERCADO_PAGO_ACCESS_TOKEN not configured');
+      throw new Error('Credenciais do Mercado Pago não configuradas');
     }
 
     // Gerar external_reference se não fornecido
     const reference = externalReference || `ORDER_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     // Obter origin para URLs
-    const origin = req.headers.get("host")?.includes("localhost")
-      ? "http://localhost:5173"
-      : `https://${req.headers.get("host")}`;
+    const host = req.headers.host || '';
+    const origin = host.includes('localhost')
+      ? 'http://localhost:5173'
+      : `https://${host}`;
 
     // Converter ids para string para compatibilidade com Mercado Pago
     const normalizedItems = items.map((item) => ({
@@ -88,9 +85,9 @@ export default async function handler(req: Request) {
       back_urls: backUrls,
       external_reference: reference,
       notification_url: `${origin}/api/webhooks/mercadopago`,
-      auto_return: "approved",
+      auto_return: 'approved',
       binary_mode: true,
-      statement_descriptor: "MATHEUSNICOLLY",
+      statement_descriptor: 'MATHEUSNICOLLY',
       payment_methods: {
         excluded_payment_types: [],
         installments: 12,
@@ -98,7 +95,7 @@ export default async function handler(req: Request) {
       ...(payer && { payer }),
     };
 
-    console.log("Creating Mercado Pago preference:", {
+    console.log('Creating Mercado Pago preference:', {
       itemsCount: normalizedItems.length,
       total: normalizedItems.reduce(
         (sum, item) => sum + item.unit_price * item.quantity,
@@ -109,11 +106,11 @@ export default async function handler(req: Request) {
     });
 
     const response = await fetch(
-      "https://api.mercadopago.com/checkout/preferences",
+      'https://api.mercadopago.com/checkout/preferences',
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify(requestBody),
@@ -122,7 +119,7 @@ export default async function handler(req: Request) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("Mercado Pago API error:", {
+      console.error('Mercado Pago API error:', {
         status: response.status,
         statusText: response.statusText,
         body: errorText,
@@ -132,42 +129,35 @@ export default async function handler(req: Request) {
       );
     }
 
-    const preference = await response.json();
+    const preference = await response.json() as {
+      id?: string;
+      init_point?: string;
+      sandbox_init_point?: string;
+      external_reference?: string;
+    };
     const initPoint = preference.init_point || preference.sandbox_init_point;
 
     if (!initPoint) {
-      console.error("Mercado Pago response missing init_point:", preference);
-      throw new Error("URL de pagamento não encontrada na resposta");
+      console.error('Mercado Pago response missing init_point:', preference);
+      throw new Error('URL de pagamento não encontrada na resposta');
     }
 
-    console.log("Mercado Pago preference created:", {
+    console.log('Mercado Pago preference created:', {
       preference_id: preference.id,
       init_point: initPoint,
       external_reference: preference.external_reference,
     });
 
-    return new Response(
-      JSON.stringify({
-        initPoint,
-        preferenceId: preference.id,
-        externalReference: preference.external_reference,
-      }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return res.status(200).json({
+      initPoint,
+      preferenceId: preference.id,
+      externalReference: preference.external_reference,
+    });
   } catch (error) {
-    console.error("Error creating preference:", error);
+    console.error('Error creating preference:', error);
 
-    return new Response(
-      JSON.stringify({
-        error: error instanceof Error ? error.message : "Unknown error",
-      }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
   }
 }
