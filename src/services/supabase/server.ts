@@ -92,11 +92,15 @@ interface FetchGuestsResponse {
 async function fetchGuests(
   params?: FetchGuestsParams
 ): Promise<FetchGuestsResponse> {
+  console.log("fetchGuests called with params:", params);
+
   const { data, error, count } = await supabase
     .from("GuestList")
     .select("*", { count: "exact" })
     .order("created_at", { ascending: false })
     .limit(params?.limit || 100);
+
+  console.log("fetchGuests result:", { data, error, count });
 
   if (error) {
     console.error("Error fetching guests:", error);

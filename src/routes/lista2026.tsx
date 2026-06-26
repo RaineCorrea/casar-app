@@ -25,6 +25,14 @@ export const Route = createFileRoute("/lista2026")({
 function Lista2026() {
   const { data: guests, isLoading, error } = useGuestsWithRealtime();
 
+  // Debug: logar estado para identificar problemas
+  console.log("Lista2026 state:", {
+    guestsCount: guests?.length,
+    guests,
+    isLoading,
+    error: error?.message
+  });
+
   const handleLogout = () => {
     localStorage.removeItem("admin_token");
     window.location.href = "/login";
