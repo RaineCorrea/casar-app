@@ -25,14 +25,14 @@ export const Route = createFileRoute("/lista2026")({
 function Lista2026() {
   const { data, isLoading, error } = useGuestsWithRealtime();
 
-  const guestsListList = data?.guestsList ?? [];
+  const guestsList = data?.guests ?? [];
   const totalCount = data?.totalCount ?? 0;
 
   // Debug: logar estado para identificar problemas
   console.log("Lista2026 state:", {
-    guestsListCount: guestsListList.length,
+    guestsCount: guestsList.length,
     totalCount,
-    guestsListList,
+    guestsList,
     isLoading,
     error: error?.message
   });
