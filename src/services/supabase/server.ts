@@ -44,7 +44,7 @@ async function fetchProducts(
   const [column, order] = sortBy.split("_") as [string, "asc" | "desc"];
 
   const { data, error, count } = await supabase
-    .from("produtos")
+    .from("Products")
     .select("*", { count: "exact" })
     .order(column, { ascending: order === "asc" })
     .range((page - 1) * limit, page * limit - 1);
