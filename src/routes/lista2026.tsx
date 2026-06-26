@@ -1,8 +1,8 @@
 import { redirect, createFileRoute } from "@tanstack/react-router";
 import {
-  guestsListQueryOptions,
+  guestsQueryOptions,
   useGuestsWithRealtime,
-} from "../services/supabase/guestsList";
+} from "../services/supabase/guests";
 import { validateAdminToken } from "../services/auth/admin";
 import { IconeEmail, IconeTelefone } from "../components/icons";
 
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/lista2026")({
     }
   },
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(guestsListQueryOptions);
+    await context.queryClient.ensureQueryData(guestsQueryOptions);
   },
   component: Lista2026,
 });
