@@ -5,10 +5,15 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "handle": "filesystem"
+      "source": "/lista2026",
+      "destination": "/index.html"
     },
     {
-      "source": "/(.*)",
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/checkout/:path*",
       "destination": "/index.html"
     }
   ],
