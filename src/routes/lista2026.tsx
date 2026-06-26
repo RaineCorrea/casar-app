@@ -1,8 +1,8 @@
 import { redirect, createFileRoute } from "@tanstack/react-router";
 import {
-  guestsQueryOptions,
+  guestsListQueryOptions,
   useGuestsWithRealtime,
-} from "../services/supabase/guests";
+} from "../services/supabase/guestsList";
 import { validateAdminToken } from "../services/auth/admin";
 import { IconeEmail, IconeTelefone } from "../components/icons";
 
@@ -17,18 +17,22 @@ export const Route = createFileRoute("/lista2026")({
     }
   },
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(guestsQueryOptions);
+    await context.queryClient.ensureQueryData(guestsListQueryOptions);
   },
   component: Lista2026,
 });
 
 function Lista2026() {
-  const { data: guests, isLoading, error } = useGuestsWithRealtime();
+  const { data, isLoading, error } = useGuestsWithRealtime();
+
+  const guestsListList = data?.guestsList ?? [];
+  const totalCount = data?.totalCount ?? 0;
 
   // Debug: logar estado para identificar problemas
   console.log("Lista2026 state:", {
-    guestsCount: guests?.length,
-    guests,
+    guestsListCount: guestsListList.length,
+    totalCount,
+    guestsListList,
     isLoading,
     error: error?.message
   });
@@ -39,7 +43,7 @@ function Lista2026() {
   };
 
   // Mostrar loading apenas se não houver dados e estiver carregando
-  const showLoading = isLoading && !guests;
+  const showLoading = isLoading && !data;
 
   return (
     <div
@@ -89,7 +93,7 @@ function Lista2026() {
             </div>
           )}
 
-          {!showLoading && !error && (guests?.length ?? 0) === 0 && (
+          {!showLoading && !error && (guestsList?.length ?? 0) === 0 && (
             <div className="text-center py-12 bg-wheat/50 rounded-2xl">
               <p className="text-forest-dark font-body text-lg">
                 Nenhum convidado confirmado ainda.
@@ -97,15 +101,15 @@ function Lista2026() {
             </div>
           )}
 
-          {!showLoading && !error && guests && guests.length > 0 && (
+          {!showLoading && !error && guestsList && guestsList.length > 0 && (
             <div className="space-y-4">
               <div className="flex justify-between items-center mb-6 pb-4 border-b border-forest/20">
                 <span className="font-body text-base font-semibold text-forest-dark">
-                  Total de convidados: {guests.length}
+                  Total de convidados: {guestsList.length}
                 </span>
               </div>
 
-              {guests.map((guest) => (
+              {guestsList.map((guest) => (
                 <div
                   key={guest.id}
                   className="p-6 bg-wheat/50 rounded-2xl border border-sage-light/30 hover:shadow-soft transition-all duration-300"
@@ -113,7 +117,7 @@ function Lista2026() {
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <h3 className="font-display text-forest-dark text-xl mb-3 font-medium">
-                        {guest.name}
+                        {guest.nome}
                       </h3>
 
                       {(guest.email || guest.telefone) && (
